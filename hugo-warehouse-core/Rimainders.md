@@ -1,0 +1,1 @@
+Scaffold-DbContext "Server=localhost;Database=HugosConnect;Trusted_Connection=True;" Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models/Poco

@@ -1,0 +1,24 @@
+#LoginPage {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  flex-grow: 1;
+  background-image: url("../../Assets/Images/login-page-background.jpg");
+  background-position: center; /* Center the image */
+  background-repeat: no-repeat; /* Do not repeat the image */
+  background-size: cover; /* Resize the background image to cover the entire container */
+
+  .form {
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 5px;
+    &-title {
+      margin-bottom: 10px;
+    }
+    &-subtitle {
+      margin-bottom: 30px;
+    }
+  }
+}

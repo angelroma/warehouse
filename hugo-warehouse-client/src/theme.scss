@@ -1,0 +1,25 @@
+//Required bootstrap imports
+@import "~bootstrap/scss/functions";
+@import "~bootstrap/scss/variables";
+@import "~bootstrap/scss/mixins";
+
+//Required optional imports to be able to handle grid and utilities
+@import "~bootstrap/scss/grid";
+@import "~bootstrap/scss/utilities";
+
+//rsuite default styles
+@import "~rsuite/dist/styles/rsuite-default.css";
+
+//Ant Design default styles
+@import "~antd/dist/antd.css";
+
+
+//Initial global styles
+
+html,
+body,
+#root {
+  max-width: 100%;
+  overflow-x: hidden;
+  background-color: #EDF0F5;
+}
