@@ -1,32 +1,20 @@
 import React, { useEffect, useState } from 'react'
-import { Product, ProductAttribute, CustomParams } from '../../Interfaces/products.interface';
+import { Product, } from '../../Interfaces/products.interface';
 import { Link } from 'react-router-dom';
 import { add } from '../../Services/products.service';
-import { getAll as getAllAttributes } from '../../Services/attributes.service';
 import { getAll as getCategories } from '../../Services/categories.service'
 import { Form, Input, Button, Card, notification, Select } from 'antd';
 import { Store } from 'antd/lib/form/interface';
-import { Attribute } from '../../Interfaces/attributes.interface';
 import { Category } from '../../Interfaces/categories.interface';
 const { Option } = Select;
 
-
 const ProductAdd = () => {
-  const [customParams, setCustomParams] = useState<CustomParams[]>([]);
   const [form] = Form.useForm();
-  const [attributes, setAttributes] = useState<Attribute[]>([]);
   const [categories, setCategories] = useState<Category[] | null>();
 
-
   useEffect(() => {
-    getAllAttributes()
-      .then(result => {
-        setAttributes(result)
-      })
-      .then(() => {
         getCategories()
-          .then(result => setCategories(result))
-      })
+        .then(result => setCategories(result))
       .catch(() => {
         notification["error"]({
           message: 'Error inesperado',
@@ -37,16 +25,13 @@ const ProductAdd = () => {
   }, [])
 
   const onFinish = (values: Store) => {
-    const productAttributes = customParams.map(x => ({ attributeId: x.key, productId: 0, value: x.value } as ProductAttribute));
 
     const entity: Product = {
       key: values.key, name: values.name,
       description: values.description,
       createdOn: values.createdOn,
-      price: values.price,
       categoryId: values.categoryId,
       categoryName: values.categoryName,
-      productAttributes: productAttributes,
     }
 
     console.log('Success:', values);
@@ -73,7 +58,6 @@ const ProductAdd = () => {
     console.log('Failed:', errorInfo);
   };
 
-  if (attributes === undefined) return <div>Cargando...</div>
 
   return (
 
@@ -125,31 +109,7 @@ const ProductAdd = () => {
               )}
             </Select>
           </Form.Item>
-
-
-          {customParams.map((x, index) =>
-            <Form.Item
-              key={index}
-              label={x.name}
-              name={x.name}
-            >
-              <div className="row">
-                <div className="col-10">
-                  <Input disabled value={x.value} />
-                </div>
-                <div className="col-2">
-                  <Button onClick={() => {
-                    console.log(index, x);
-
-                    const newParams = customParams.slice()
-                    newParams.splice(index, index + 1);
-                    setCustomParams(newParams)
-                  }}>Eliminar</Button>
-                </div>
-              </div>
-
-            </Form.Item>
-          )}
+        
 
           <Form.Item >
             <Button type="primary" htmlType="submit">

@@ -5,4 +5,5 @@ export interface Product {
   createdOn: string
   categoryId: number
   categoryName: string
+  price:number
 }

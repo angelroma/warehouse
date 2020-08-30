@@ -10,17 +10,15 @@ Post-Deployment Script Template
 --------------------------------------------------------------------------------------
 */
 
-Insert Into dbo.Role ([Id],[Name])
+Insert Into dbo.Role ([Name])
 Values 
-(1, 'developer')
-,(2, 'admin')
-,(3,'almacen')
+('developer')
+,('admin')
+,('almacen')
 
 INSERT INTO dbo.[User]
 (
-    FirstName,
-    MiddleName,
-    LastName,
+    Name,
     Age,
     Email,
     Password,
@@ -29,9 +27,7 @@ INSERT INTO dbo.[User]
 )
 VALUES
 (
-    'Miguel Angel', 
-    'Rodriguez',
-    'Martinez', 
+    'Miguel Angel Rodriguez Martinez', 
     25, 
     'an.coderoma@gmail.com', 
     'Mente!0Unica',

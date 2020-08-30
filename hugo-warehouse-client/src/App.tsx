@@ -16,9 +16,8 @@ import Login from './Pages/Login/LoginPage'
 import Dashboard from './Pages/Dashboard'
 
 //Products
-import Products from './Pages/Products';
-import ProductAdd from './Pages/Products/Add';
-import ProductUpdate from './Pages/Products/Update';
+import Products from './Pages/Products/ProductList';
+import ProductAdd from './Pages/Products/ProductForm';
 
 //Categories
 import Categories from './Pages/Categories'
@@ -71,9 +70,6 @@ const App = () => {
 
               <Route exact path="/productos" >
                 <Products />
-              </Route>
-              <Route path={`/productos/editar/:id`}>
-                <ProductUpdate />
               </Route>
               <Route path={`/productos/agregar`}>
                 <ProductAdd />

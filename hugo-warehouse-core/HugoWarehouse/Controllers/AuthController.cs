@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using HugoWarehouse.Models.Common;
 using HugoWarehouse.Models.Poco;
-using HugoWarehouse.Models.Requests;
 using HugoWarehouse.Services;
 using HugoWarehouse.Utils;
 using Microsoft.AspNetCore.Authorization;
@@ -26,15 +25,20 @@ namespace HugoWarehouse.Controllers
             _service = service;
         }
 
+        public class AuthRequest
+        {
+            public string Username { get; set; }
+            public string Password { get; set; }
+        }
+
         [AllowAnonymous]
         [HttpPost("login")]
         public async Task<ActionResult> PostLogin(AuthRequest authRequest)
         {
             try
             {
-                var result = await _service.Login(authRequest.Username, authRequest.Password);
-
-                return Ok(new OkResult("The user has been logged in", result));
+                var token = await _service.Login(authRequest.Username, authRequest.Password);
+                return Ok(new OkResult("The user has been logged in", new { Token = token }));
             }
             catch (Exception e)
             {

@@ -15,11 +15,12 @@ namespace HugoWarehouse.Models.Poco
         {
         }
 
-        public virtual DbSet<Attribute> Attribute { get; set; }
         public virtual DbSet<Category> Category { get; set; }
         public virtual DbSet<Operation> Operation { get; set; }
         public virtual DbSet<OperationType> OperationType { get; set; }
         public virtual DbSet<Product> Product { get; set; }
+        public virtual DbSet<ProductProvider> ProductProvider { get; set; }
+        public virtual DbSet<Provider> Provider { get; set; }
         public virtual DbSet<Role> Role { get; set; }
         public virtual DbSet<User> User { get; set; }
 
@@ -40,12 +41,13 @@ namespace HugoWarehouse.Models.Poco
                     .HasColumnType("datetime")
                     .HasDefaultValueSql("(getdate())");
 
-                entity.Property(e => e.Name)
-                    .IsRequired()
-                    .HasMaxLength(25);
                 entity.Property(e => e.Description)
                     .IsRequired()
                     .HasMaxLength(250);
+
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasMaxLength(25);
             });
 
             modelBuilder.Entity<Operation>(entity =>
@@ -58,7 +60,7 @@ namespace HugoWarehouse.Models.Poco
 
                 entity.Property(e => e.Description)
                     .IsRequired()
-                    .HasColumnType("text");
+                    .HasMaxLength(15);
 
                 entity.HasOne(d => d.IdNavigation)
                     .WithOne(p => p.Operation)
@@ -88,6 +90,16 @@ namespace HugoWarehouse.Models.Poco
 
             modelBuilder.Entity<Product>(entity =>
             {
+                entity.Property(e => e.Brand)
+                    .IsRequired()
+                    .HasMaxLength(45)
+                    .HasDefaultValueSql("('Unkown')");
+
+                entity.Property(e => e.Color)
+                    .IsRequired()
+                    .HasMaxLength(30)
+                    .HasDefaultValueSql("('Unkown')");
+
                 entity.Property(e => e.CreatedOn)
                     .HasColumnType("datetime")
                     .HasDefaultValueSql("(getdate())");
@@ -100,6 +112,11 @@ namespace HugoWarehouse.Models.Poco
                     .IsRequired()
                     .HasMaxLength(255);
 
+                entity.Property(e => e.Sku)
+                    .IsRequired()
+                    .HasMaxLength(25)
+                    .HasDefaultValueSql("('Unkown')");
+
                 entity.HasOne(d => d.Category)
                     .WithMany(p => p.Product)
                     .HasForeignKey(d => d.CategoryId)
@@ -107,6 +124,35 @@ namespace HugoWarehouse.Models.Poco
                     .HasConstraintName("FK_Product_Has_Category");
             });
 
+            modelBuilder.Entity<ProductProvider>(entity =>
+            {
+                entity.Property(e => e.Id).ValueGeneratedNever();
+
+                entity.HasOne(d => d.Prodiver)
+                    .WithMany(p => p.ProductProvider)
+                    .HasForeignKey(d => d.ProdiverId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__ProductPr__Prodi__4316F928");
+
+                entity.HasOne(d => d.Product)
+                    .WithMany(p => p.ProductProvider)
+                    .HasForeignKey(d => d.ProductId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__ProductPr__Produ__440B1D61");
+            });
+
+            modelBuilder.Entity<Provider>(entity =>
+            {
+                entity.Property(e => e.Id).ValueGeneratedNever();
+
+                entity.Property(e => e.CreatedOn)
+                    .HasColumnType("datetime")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasMaxLength(60);
+            });
 
             modelBuilder.Entity<Role>(entity =>
             {
@@ -135,7 +181,7 @@ namespace HugoWarehouse.Models.Poco
 
                 entity.Property(e => e.Name)
                     .IsRequired()
-                    .HasMaxLength(130);
+                    .HasMaxLength(205);
 
                 entity.Property(e => e.Password)
                     .IsRequired()

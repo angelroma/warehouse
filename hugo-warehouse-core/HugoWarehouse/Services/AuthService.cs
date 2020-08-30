@@ -19,11 +19,7 @@ namespace HugoWarehouse.Services
 
         public async Task<string> Login(string username, string password)
         {
-            var user = await (from u in _context.User
-                              join r in _context.Role on u.RoleId equals r.Id
-                              where u.UserName == username && u.Password == password
-                              select u).FirstOrDefaultAsync();
-
+            var user = await _context.User.Include(x=>x.Role).FirstOrDefaultAsync(u => u.UserName == username && u.Password == password);
 
             if (user == null) throw new Exception("Verifica tu contraseña o tu nombre de usuario.");
 
