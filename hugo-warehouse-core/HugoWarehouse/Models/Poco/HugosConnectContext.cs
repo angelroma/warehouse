@@ -20,7 +20,6 @@ namespace HugoWarehouse.Models.Poco
         public virtual DbSet<Operation> Operation { get; set; }
         public virtual DbSet<OperationType> OperationType { get; set; }
         public virtual DbSet<Product> Product { get; set; }
-        public virtual DbSet<ProductAttribute> ProductAttribute { get; set; }
         public virtual DbSet<Role> Role { get; set; }
         public virtual DbSet<User> User { get; set; }
 
@@ -35,17 +34,6 @@ namespace HugoWarehouse.Models.Poco
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Attribute>(entity =>
-            {
-                entity.Property(e => e.Description)
-                    .IsRequired()
-                    .HasColumnType("text");
-
-                entity.Property(e => e.Name)
-                    .IsRequired()
-                    .HasMaxLength(76);
-            });
-
             modelBuilder.Entity<Category>(entity =>
             {
                 entity.Property(e => e.CreatedOn)
@@ -119,28 +107,6 @@ namespace HugoWarehouse.Models.Poco
                     .HasConstraintName("FK_Product_Has_Category");
             });
 
-            modelBuilder.Entity<ProductAttribute>(entity =>
-            {
-                entity.HasNoKey();
-
-                entity.Property(e => e.ProductId).ValueGeneratedOnAdd();
-
-                entity.Property(e => e.Value)
-                    .IsRequired()
-                    .HasMaxLength(210);
-
-                entity.HasOne(d => d.Attribute)
-                    .WithMany()
-                    .HasForeignKey(d => d.AttributeId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_ProductAttribute_Attribute");
-
-                entity.HasOne(d => d.Product)
-                    .WithMany()
-                    .HasForeignKey(d => d.ProductId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_ProductAttribute_Product");
-            });
 
             modelBuilder.Entity<Role>(entity =>
             {

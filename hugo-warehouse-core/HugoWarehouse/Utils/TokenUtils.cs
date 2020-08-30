@@ -5,7 +5,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
-using HugoWarehouse.Models.Responses;
+using HugoWarehouse.Models.Poco;
 using Microsoft.IdentityModel.Tokens;
 
 namespace HugoWarehouse.Utils
@@ -21,7 +21,7 @@ namespace HugoWarehouse.Utils
             return stringClaimValue;
         }
 
-        public static string GenerateJsonWebToken(AuthResponse user)
+        public static string GenerateJsonWebToken(User user)
         {
             string mySecret = "This is a custom token provider to be able to create token";
             SymmetricSecurityKey mySecurityKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(mySecret));
@@ -34,8 +34,8 @@ namespace HugoWarehouse.Utils
                 Subject = new ClaimsIdentity(new Claim[]
                 {
                     new Claim("id", user.Id.ToString()),
-                    new Claim(ClaimTypes.Name, user.Username),
-                    new Claim(ClaimTypes.Role,user.Role ), 
+                    new Claim(ClaimTypes.Name, user.UserName),
+                    new Claim(ClaimTypes.Role,user.Role.Name ),
                 }),
                 Expires = DateTime.UtcNow.AddHours(8),
                 //Issuer = myIssuer,
