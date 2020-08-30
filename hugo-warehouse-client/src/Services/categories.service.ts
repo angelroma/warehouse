@@ -7,16 +7,16 @@ export const getAll = async (): Promise<Category[]> => {
     const response = await api.get(`/categories/GetAll`)
     const entities = response.data as CategoryResponse[];
 
-    var result = entities.map(x => {
-      return {
-        key: x.id,
-        createdOn: x.createdOn,
-        description: x.description,
-        name: x.name
-      } as Category
-    })
+    // var result = entities.map(x => {
+    //   return {
+    //     key: x.id,
+    //     createdOn: x.createdOn,
+    //     description: x.description,
+    //     name: x.name
+    //   } as Category
+    // })
 
-    return result;
+    return entities;
   }
   catch (e) {
     throw new Error("No se pueden obtener las categorías.");

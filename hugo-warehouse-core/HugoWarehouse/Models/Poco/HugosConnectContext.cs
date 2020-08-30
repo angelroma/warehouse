@@ -19,7 +19,6 @@ namespace HugoWarehouse.Models.Poco
         public virtual DbSet<Operation> Operation { get; set; }
         public virtual DbSet<OperationType> OperationType { get; set; }
         public virtual DbSet<Product> Product { get; set; }
-        public virtual DbSet<ProductProvider> ProductProvider { get; set; }
         public virtual DbSet<Provider> Provider { get; set; }
         public virtual DbSet<Role> Role { get; set; }
         public virtual DbSet<User> User { get; set; }
@@ -122,29 +121,15 @@ namespace HugoWarehouse.Models.Poco
                     .HasForeignKey(d => d.CategoryId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Product_Has_Category");
-            });
 
-            modelBuilder.Entity<ProductProvider>(entity =>
-            {
-                entity.Property(e => e.Id).ValueGeneratedNever();
-
-                entity.HasOne(d => d.Prodiver)
-                    .WithMany(p => p.ProductProvider)
-                    .HasForeignKey(d => d.ProdiverId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__ProductPr__Prodi__4316F928");
-
-                entity.HasOne(d => d.Product)
-                    .WithMany(p => p.ProductProvider)
-                    .HasForeignKey(d => d.ProductId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__ProductPr__Produ__440B1D61");
+                entity.HasOne(d => d.Provider)
+                    .WithMany(p => p.Product)
+                    .HasForeignKey(d => d.ProviderId)
+                    .HasConstraintName("FK__Product__Provide__403A8C7D");
             });
 
             modelBuilder.Entity<Provider>(entity =>
             {
-                entity.Property(e => e.Id).ValueGeneratedNever();
-
                 entity.Property(e => e.CreatedOn)
                     .HasColumnType("datetime")
                     .HasDefaultValueSql("(getdate())");

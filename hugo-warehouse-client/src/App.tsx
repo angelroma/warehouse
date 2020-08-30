@@ -16,8 +16,8 @@ import Login from './Pages/Login/LoginPage'
 import Dashboard from './Pages/Dashboard'
 
 //Products
-import Products from './Pages/Products/ProductList';
-import ProductAdd from './Pages/Products/ProductForm';
+import Products from './Pages/Products';
+import ProductAdd from './Pages/Products/ProductAdd';
 
 //Categories
 import Categories from './Pages/Categories'

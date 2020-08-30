@@ -10,12 +10,11 @@ import {
 } from "react-router-dom";
 import moment from 'moment';
 import DateRangePicker, { ValueType } from 'rsuite/lib/DateRangePicker';
-import { CSVLink } from "react-csv";
 
 const { Column } = Table;
 
 const Products = () => {
-  const [products, setProducts] = useState<Product[] | null>(null);
+  const [products, setProducts] = useState<Product[]>();
   const [loading, setLoading] = useState(false);
   const [fireEffect, setFireEffect] = useState(true);
   const [rangePicker, setRangePicker] = useState<ValueType>([moment().subtract(30, 'd').toDate(), moment().toDate()])
@@ -26,7 +25,7 @@ const Products = () => {
   useEffect(() => {
     console.log("Loading")
     setLoading(true)
-    getAll(moment(rangePicker[0]), moment(rangePicker[1]))
+    getAll()
       .then(response => {
         console.log(response)
         setProducts(response)
@@ -72,8 +71,6 @@ const Products = () => {
     setFireEffect(!fireEffect)
   }
 
-  if (products === null) return (<div>Cargando...</div>)
-
   return (
     <main>
 
@@ -90,18 +87,9 @@ const Products = () => {
         </div>
 
         <div className="col-6 d-flex justify-content-end align-items-center">
-          <Link to={`${url}/agregar`} className="mr-3">Agregar nueva entidad</Link>
-          <Button type="primary">
-            <CSVLink
-              filename={`Reporte_${Date.now()}.csv`}
-              data={products}
-              headers={[{ label: "ID", key: "key" },
-              { key: "createdOn", label: "Fecha de registro" },
-              { key: "description", label: "Descripción" },
-              { key: "price", label: "Precio" },
-              { key: "name", label: "Nombre" },
-              { key: "categoryName", label: "Categoría" }
-              ]}>Descargar Reporte</CSVLink>
+
+          <Button>
+            <Link to={`${url}/agregar`}>Agregar nueva entidad</Link>
           </Button>
         </div>
       </div>

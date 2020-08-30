@@ -1,9 +1,17 @@
 export interface Product {
-  key: number
-  name: string
-  description: string
-  createdOn: string
-  categoryId: number
-  categoryName: string
-  price:number
+  id: number;
+  categoryId: number;
+  providerId: number;
+  name: string;
+  description: string;
+  price: number;
+  sku: string;
+  color: string;
+  size: number;
+  weight: number;
+  precision: number;
+  brand: string;
+  createdOn: Date;
+  category?: any;
+  operation: any[];
 }

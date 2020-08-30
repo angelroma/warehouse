@@ -3,35 +3,48 @@ import { Product, } from '../../Interfaces/products.interface';
 import { Link } from 'react-router-dom';
 import { add } from '../../Services/products.service';
 import { getAll as getCategories } from '../../Services/categories.service'
+import { getAll as getProviders } from '../../Services/providers.service'
 import { Form, Input, Button, Card, notification, Select } from 'antd';
 import { Store } from 'antd/lib/form/interface';
 import { Category } from '../../Interfaces/categories.interface';
+import { Provider } from '../../Interfaces/providers.interface';
 const { Option } = Select;
 
 const ProductAdd = () => {
   const [form] = Form.useForm();
-  const [categories, setCategories] = useState<Category[] | null>();
+  const [categories, setCategories] = useState<Category[]>();
+  const [product, setProduct] = useState<Product>();
+  const [providers, setProviders] = useState<Provider[]>();
+
 
   useEffect(() => {
-        getCategories()
-        .then(result => setCategories(result))
-      .catch(() => {
+    async function fetchData() {
+      try {
+        const categories = await getCategories(); 
+        setCategories(categories);
+
+        const providers = await getProviders();
+        setProviders(providers);
+
+      } catch (error) {
         notification["error"]({
           message: 'Error inesperado',
           description:
             'No se pueden obtener los atributos, contacte al administrador.',
         });
-      })
+      }
+    }
+
+    fetchData();
   }, [])
 
   const onFinish = (values: Store) => {
 
-    const entity: Product = {
-      key: values.key, name: values.name,
+    const entity: any = {
+      name: values.name,
       description: values.description,
       createdOn: values.createdOn,
       categoryId: values.categoryId,
-      categoryName: values.categoryName,
     }
 
     console.log('Success:', values);
@@ -57,8 +70,6 @@ const ProductAdd = () => {
   const onFinishFailed = (errorInfo: any) => {
     console.log('Failed:', errorInfo);
   };
-
-
   return (
 
     <main>
@@ -104,12 +115,12 @@ const ProductAdd = () => {
             rules={[{ required: true, message: 'Valor requerido' }]}
           >
             <Select >
-              {categories?.map(x =>
-                <Option key={x.key} value={x.key}>{x.name}</Option>
+              {categories?.map((value,index) =>
+                <Option key={index} value={value.id}>{value.name}</Option>
               )}
             </Select>
           </Form.Item>
-        
+
 
           <Form.Item >
             <Button type="primary" htmlType="submit">
@@ -119,54 +130,6 @@ const ProductAdd = () => {
         </Form>
 
       </Card>
-
-
-      {/* <Card
-        className={"mt-5 mb-5"}
-        type="inner"
-        title={`Agregar nuevo parametro`}
-      >
-        <Form
-          form={form}
-          name="basic"
-          onFinish={handleAddParameter}
-          onFinishFailed={onFinishFailed}
-        >
-          <Form.Item
-            label="Atributos"
-            name="attribute"
-            rules={[{ required: true, message: 'Valor requerido' }]}
-          >
-            <Select
-              showSearch
-              style={{ width: 200 }}
-              placeholder="Atributos disponibles"
-              optionFilterProp="children"
-              filterOption={(input, option) =>
-                option?.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-              }
-            >
-              {attributes.map((x, index) =>
-                <Option key={index} value={JSON.stringify(x)}>{x.name}</Option>
-              )}
-            </Select>
-          </Form.Item>
-
-          <Form.Item
-            label="Valor"
-            name="value"
-            rules={[{ required: true, message: 'Valor requerido' }]}
-          >
-            <Input />
-          </Form.Item>
-
-          <Form.Item >
-            <Button type="primary" htmlType="submit">
-              Agregar nueva propiedad
-        </Button>
-          </Form.Item>
-        </Form>
-      </Card> */}
 
     </main>
   )

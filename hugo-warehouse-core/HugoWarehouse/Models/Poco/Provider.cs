@@ -7,13 +7,13 @@ namespace HugoWarehouse.Models.Poco
     {
         public Provider()
         {
-            ProductProvider = new HashSet<ProductProvider>();
+            Product = new HashSet<Product>();
         }
 
         public int Id { get; set; }
         public string Name { get; set; }
         public DateTime? CreatedOn { get; set; }
 
-        public virtual ICollection<ProductProvider> ProductProvider { get; set; }
+        public virtual ICollection<Product> Product { get; set; }
     }
 }

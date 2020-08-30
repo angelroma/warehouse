@@ -1,6 +1,7 @@
 ﻿CREATE TABLE [dbo].[Product] (
     [Id]          INT         NOT NULL IDENTITY(1, 1),
     [CategoryId]  INT         NOT NULL,
+    [ProviderId] INT FOREIGN KEY REFERENCES Provider(Id),
     [Name]        NVARCHAR(255) NOT NULL,
     [Description] TEXT        NOT NULL,
     [Price] FLOAT NOT NULL DEFAULT 0.0,

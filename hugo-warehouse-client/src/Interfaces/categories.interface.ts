@@ -1,5 +1,5 @@
 export interface Category {
-  key: number
+  id: number
   name: string
   description: string
   createdOn: string

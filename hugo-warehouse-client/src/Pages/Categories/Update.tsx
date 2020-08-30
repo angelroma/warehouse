@@ -34,7 +34,7 @@ const CategoryUpdate = () => {
     getById(id)
       .then(result => {
         console.log(result)
-        const category = { key: result.id, name: result.name, description: result.description, createdOn: result.createdOn } as Category
+        const category = { key: result.id, name: result.name, description: result.description, createdOn: result.createdOn } as unknown as Category
         setCategory(category)
       })
       .catch(e => {
@@ -61,7 +61,7 @@ const CategoryUpdate = () => {
             label="ID"
             name="key"
 
-            initialValue={category.key}
+            initialValue={category.id}
           >
             <Input disabled />
           </Form.Item>

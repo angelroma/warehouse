@@ -8,11 +8,11 @@ namespace HugoWarehouse.Models.Poco
         public Product()
         {
             Operation = new HashSet<Operation>();
-            ProductProvider = new HashSet<ProductProvider>();
         }
 
         public int Id { get; set; }
         public int CategoryId { get; set; }
+        public int? ProviderId { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
         public double Price { get; set; }
@@ -25,7 +25,7 @@ namespace HugoWarehouse.Models.Poco
         public DateTime CreatedOn { get; set; }
 
         public virtual Category Category { get; set; }
+        public virtual Provider Provider { get; set; }
         public virtual ICollection<Operation> Operation { get; set; }
-        public virtual ICollection<ProductProvider> ProductProvider { get; set; }
     }
 }
