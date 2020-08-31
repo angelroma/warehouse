@@ -1,3 +1,6 @@
+import { Category } from "./categories.interface";
+import { Provider } from "./providers.interface";
+
 export interface Product {
   id: number;
   categoryId: number;
@@ -12,6 +15,6 @@ export interface Product {
   precision: number;
   brand: string;
   createdOn: Date;
-  category?: any;
-  operation: any[];
+  category?: Category;
+  operation?: Provider;
 }

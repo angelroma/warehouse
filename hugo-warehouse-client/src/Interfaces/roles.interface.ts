@@ -1,5 +1,5 @@
 export interface Role {
-  key: number
+  id: number
   name: string
   createdOn: string
 }

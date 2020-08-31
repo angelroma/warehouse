@@ -1,11 +1,10 @@
 export interface User {
-  key: number
+  id: number
   name: string
   age: number
   email: string
   password: string
-  username: string
+  userName: string
   roleId: number
-  roleName: string
   createdOn: string
 }

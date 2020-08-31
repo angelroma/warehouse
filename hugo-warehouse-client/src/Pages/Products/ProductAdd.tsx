@@ -10,17 +10,21 @@ import { Category } from '../../Interfaces/categories.interface';
 import { Provider } from '../../Interfaces/providers.interface';
 const { Option } = Select;
 
+const layout = {
+  labelCol: { span: 5 },
+  wrapperCol: { span: 19 },
+};
+
 const ProductAdd = () => {
   const [form] = Form.useForm();
   const [categories, setCategories] = useState<Category[]>();
   const [product, setProduct] = useState<Product>();
   const [providers, setProviders] = useState<Provider[]>();
 
-
   useEffect(() => {
     async function fetchData() {
       try {
-        const categories = await getCategories(); 
+        const categories = await getCategories();
         setCategories(categories);
 
         const providers = await getProviders();
@@ -40,12 +44,19 @@ const ProductAdd = () => {
 
   const onFinish = (values: Store) => {
 
-    const entity: any = {
+    const entity = {
       name: values.name,
       description: values.description,
-      createdOn: values.createdOn,
       categoryId: values.categoryId,
-    }
+      providerId: values.providerId,
+      brand: values.brand,
+      color: values.color,
+      precision: parseFloat(values.precision),
+      price: parseFloat(values.price),
+      size: parseFloat(values.size),
+      sku: values.sku,
+      weight: parseFloat(values.weight),
+    } as Product
 
     console.log('Success:', values);
     add(entity)
@@ -55,7 +66,6 @@ const ProductAdd = () => {
           description:
             'Se ha agregado una nueva entidad',
         });
-        form.resetFields();
         form.resetFields();
       })
       .catch(e => {
@@ -74,62 +84,139 @@ const ProductAdd = () => {
 
     <main>
 
-      <Card
-        type="inner"
-        title={`Agregar Producto`}
-        extra={<Link to={"/productos"}>Regresar a lista de productos</Link>}
-      >
-        <Form
-          form={form}
-          name="basic"
-          onFinish={onFinish}
-          onFinishFailed={onFinishFailed}
-        >
-          <Form.Item
-            label="Nombre"
-            name="name"
-            rules={[{ required: true, message: 'Valor requerido' }]}
+      <div className="row justify-content-center mb-4">
+        <div className="col-6">
+          <Card
+            type="inner"
+            title={`Agregar Producto`}
+            extra={<Link to={"/productos"}>Regresar a lista de productos</Link>}
           >
-            <Input />
-          </Form.Item>
 
-          <Form.Item
-            label="Descripción"
-            name="description"
-            rules={[{ required: true, message: 'Valor requerido' }]}
-          >
-            <Input />
-          </Form.Item>
+            <Form
+              form={form}
+              {...layout}
+              name="basic"
+              onFinish={onFinish}
+              onFinishFailed={onFinishFailed}
+            >
+              <Form.Item
+                label="nombre"
+                name="name"
+                rules={[{ required: true }]}
 
-          <Form.Item
-            label="Precio"
-            name="price"
-            rules={[{ required: true, message: 'Valor requerido' }]}
-          >
-            <Input type='number' />
-          </Form.Item>
+              >
+                <Input />
+              </Form.Item>
 
-          <Form.Item
-            label="Categoria"
-            name="categoryId"
-            rules={[{ required: true, message: 'Valor requerido' }]}
-          >
-            <Select >
-              {categories?.map((value,index) =>
-                <Option key={index} value={value.id}>{value.name}</Option>
-              )}
-            </Select>
-          </Form.Item>
+              <Form.Item
+                label="descripción"
+                name="description"
+                rules={[{ required: true }]}
 
+              >
+                <Input />
+              </Form.Item>
 
-          <Form.Item >
-            <Button type="primary" htmlType="submit">
-              Agregar producto
+              <Form.Item
+                label="precio"
+                name="price"
+                rules={[{ required: true }]}
+
+              >
+                <Input type='number' />
+              </Form.Item>
+
+              <Form.Item
+                label="categoria"
+                name="categoryId"
+                rules={[{ required: true }]}
+
+              >
+                <Select >
+                  {categories?.map((value, index) =>
+                    <Option key={index} value={value.id}>{value.name}</Option>
+                  )}
+                </Select>
+              </Form.Item>
+
+              <Form.Item
+                label="proveedor"
+                name="providerId"
+                rules={[{ required: true }]}
+
+              >
+                <Select >
+                  {providers?.map((value, index) =>
+                    <Option key={index} value={value.id}>{value.name}</Option>
+                  )}
+                </Select>
+              </Form.Item>
+
+              <Form.Item
+                label="sku"
+                name="sku"
+                rules={[{ required: true }]}
+
+              >
+                <Input />
+              </Form.Item>
+
+              <Form.Item
+                label="color"
+                name="color"
+                rules={[{ required: true }]}
+
+              >
+                <Input />
+              </Form.Item>
+
+              <Form.Item
+                label="tamaño"
+                name="size"
+                rules={[{ required: true }]}
+
+              >
+                <Input />
+              </Form.Item>
+
+              <Form.Item
+                label="peso"
+                name="weight"
+                rules={[{ required: true }]}
+
+              >
+                <Input />
+              </Form.Item>
+
+              <Form.Item
+                label="presición"
+                name="precision"
+                rules={[{ required: true }]}
+              >
+                <Input />
+              </Form.Item>
+
+              <Form.Item
+                label="marca"
+                name="brand"
+                rules={[{ required: true }]}
+
+              >
+                <Input />
+              </Form.Item>
+
+              <Form.Item >
+                <Button type="primary" htmlType="submit">
+                  Agregar producto
         </Button>
-          </Form.Item>
-        </Form>
+              </Form.Item>
+            </Form>
 
-      </Card>
+          </Card>
+
+        </div>
+      </div>
+
 
     </main>
   )

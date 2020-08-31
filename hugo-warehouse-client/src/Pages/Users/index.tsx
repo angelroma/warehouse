@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Table, notification, Button, Popconfirm } from 'antd';
 import { User } from '../../Interfaces/users.interface';
-import { getAll,  deleteById } from '../../Services/users.service';
+import { getAll as getAllUsers, deleteById } from '../../Services/users.service';
 import { useRouteMatch, useHistory } from 'react-router-dom';
 import {
   Switch,
@@ -11,7 +11,7 @@ import {
 const { Column } = Table;
 
 const MainEntity = () => {
-  const [users, setUsers] = useState<User[] | null>(null);
+  const [users, setUsers] = useState<User[]>();
   const [loading, setLoading] = useState(false);
   const [fireEffect, setFireEffect] = useState(true);
   let { url } = useRouteMatch();
@@ -20,7 +20,8 @@ const MainEntity = () => {
   useEffect(() => {
     console.log("Loading")
     setLoading(true)
-    getAll()
+
+    getAllUsers()
       .then(response => {
         console.log(response)
         setUsers(response)
@@ -69,41 +70,51 @@ const MainEntity = () => {
 
   return (
     <main>
+      <div className="row justify-content-end">
+
+<div className="col-auto">
+
+  <Button>
+    <Link to={`${url}/agregar`}>Agregar nueva entidad</Link>
+  </Button>
+</div>
+</div>
+
+
+
       <div className="row">
         <div className="col-12">
           <Switch>
 
             <Route exact path={`${url}`}>
 
-              <Link to={`${url}/agregar`}>Agregar nueva entidad</Link>
-
-              <Table dataSource={users} bordered size={"small"} loading={loading} className="mt-3">
+              <Table dataSource={users} bordered size={"small"} loading={loading} className="mt-3" rowKey="id">
                 <Column
                   title='#'
-                  key='key'
+                  key='id'
                   render={(v) => (<div className="d-flex flex-row">
                     <Popconfirm
                       title="¿Estás seguro de borrar esta categoría?"
-                      onConfirm={() => confirm(v.key)}
+                      onConfirm={() => confirm(v.id)}
                       okText="Si"
                       cancelText="No"
                     >
                       <Button type="link" className="p-0 m-1">Borrar</Button>
 
                     </Popconfirm>
-                    <Button type="link" className="p-0 m-1" onClick={() => history.push(`${url}/editar/${v.key}`)}>Editar</Button>
+                    <Button type="link" className="p-0 m-1" onClick={() => history.push(`${url}/editar/${v.id}`)}>Editar</Button>
                   </div>)}
                 />
 
                 <Column<User>
                   title='ID'
-                  dataIndex='key'
-                  key='key'
+                  dataIndex='id'
+                  key='id'
                 />
-                  <Column<User>
+                <Column<User>
                   title='Usuario'
-                  dataIndex='username'
-                  key='username'
+                  dataIndex='userName'
+                  key='userName'
                 />
                 <Column<User>
                   title='Nombre'
@@ -120,11 +131,6 @@ const MainEntity = () => {
                   dataIndex='email'
                   key='email'
                 />
-                    <Column<User>
-                  title='Role'
-                  dataIndex='roleName'
-                  key='roleName'
-                />
                 <Column<User>
                   title='Fecha de Registro'
                   dataIndex='createdOn'
@@ -132,7 +138,7 @@ const MainEntity = () => {
                 />
               </Table>
             </Route>
-           
+
           </Switch>
 
 

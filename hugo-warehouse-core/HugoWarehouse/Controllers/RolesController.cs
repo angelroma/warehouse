@@ -11,49 +11,48 @@ namespace HugoWarehouse.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ProductsController : ControllerBase
+    public class RolesController : ControllerBase
     {
         private readonly HugosConnectContext _context;
 
-        public ProductsController(HugosConnectContext context)
+        public RolesController(HugosConnectContext context)
         {
             _context = context;
         }
 
-        // GET: api/Products
+        // GET: api/Roles
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Product>>> GetProduct()
+        public async Task<ActionResult<IEnumerable<Role>>> GetRole()
         {
-            return await _context.Product
-                .ToListAsync();
+            return await _context.Role.ToListAsync();
         }
 
-        // GET: api/Products/5
+        // GET: api/Roles/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Product>> GetProduct(int id)
+        public async Task<ActionResult<Role>> GetRole(int id)
         {
-            var product = await _context.Product.FindAsync(id);
+            var role = await _context.Role.FindAsync(id);
 
-            if (product == null)
+            if (role == null)
             {
                 return NotFound();
             }
 
-            return product;
+            return role;
         }
 
-        // PUT: api/Products/5
+        // PUT: api/Roles/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutProduct(int id, Product product)
+        public async Task<IActionResult> PutRole(int id, Role role)
         {
-            if (id != product.Id)
+            if (id != role.Id)
             {
                 return BadRequest();
             }
 
-            _context.Entry(product).State = EntityState.Modified;
+            _context.Entry(role).State = EntityState.Modified;
 
             try
             {
@@ -61,7 +60,7 @@ namespace HugoWarehouse.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!ProductExists(id))
+                if (!RoleExists(id))
                 {
                     return NotFound();
                 }
@@ -74,37 +73,37 @@ namespace HugoWarehouse.Controllers
             return NoContent();
         }
 
-        // POST: api/Products
+        // POST: api/Roles
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
-        public async Task<ActionResult<Product>> PostProduct(Product product)
+        public async Task<ActionResult<Role>> PostRole(Role role)
         {
-            _context.Product.Add(product);
+            _context.Role.Add(role);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetProduct", new { id = product.Id }, product);
+            return CreatedAtAction("GetRole", new { id = role.Id }, role);
         }
 
-        // DELETE: api/Products/5
+        // DELETE: api/Roles/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Product>> DeleteProduct(int id)
+        public async Task<ActionResult<Role>> DeleteRole(int id)
         {
-            var product = await _context.Product.FindAsync(id);
-            if (product == null)
+            var role = await _context.Role.FindAsync(id);
+            if (role == null)
             {
                 return NotFound();
             }
 
-            _context.Product.Remove(product);
+            _context.Role.Remove(role);
             await _context.SaveChangesAsync();
 
-            return product;
+            return role;
         }
 
-        private bool ProductExists(int id)
+        private bool RoleExists(int id)
         {
-            return _context.Product.Any(e => e.Id == id);
+            return _context.Role.Any(e => e.Id == id);
         }
     }
 }
