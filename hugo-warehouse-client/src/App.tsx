@@ -27,8 +27,6 @@ import CategoryUpdate from './Pages/Categories/Update'
 
 //Users
 import Users from './Pages/Users'
-import UserAdd from './Pages/Users/Add'
-import UserUpdate from './Pages/Users/Update'
 
 const App = () => {
   const isAuthenticated = useSelector<RootState>(state => state.auth_reducer.isAuthenticated);
@@ -80,14 +78,8 @@ const App = () => {
                 <ProductUpdate />
               </Route>
 
-              <Route exact path="/usuarios" >
+              <Route path="/usuarios" >
                 <Users />
-              </Route>
-              <Route path={`/usuarios/editar/:id`}>
-                <UserUpdate />
-              </Route>
-              <Route path={`/usuarios/agregar`}>
-                <UserAdd />
               </Route>
 
               <Route exact path="/categorias">
@@ -101,7 +93,6 @@ const App = () => {
               <Route path={`/categorias/agregar`}>
                 <CategoryAdd />
               </Route>
-
 
               <Route path="*">
                 <Dashboard />
