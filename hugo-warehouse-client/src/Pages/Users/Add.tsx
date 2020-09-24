@@ -14,6 +14,10 @@ const EntityAdd = () => {
 
   const onFinish = (values: Store) => {
     const entity = values as User
+
+    entity.roleId = parseFloat(entity.roleId.toString());
+    entity.age = Number(entity.age.toString());
+
     console.log('Success:', values);
     add(entity)
       .then(() => {
@@ -44,7 +48,7 @@ const EntityAdd = () => {
 
     <main>
 
-      <Card type="inner" title={`Agregar entidad`} extra={<Link to={"/productos"}>Regresar a lista de productos</Link>}>
+      <Card type="inner" title={`Agregar entidad`} extra={<Link to={"/usuarios"}>Regresar a lista de usuarios</Link>}>
 
         <Form
           name="basic"
@@ -82,7 +86,7 @@ const EntityAdd = () => {
             name="age"
             rules={[{ required: true, message: 'Valor requerido' }]}
           >
-            <Input type="number"/>
+            <Input type="number" />
           </Form.Item>
 
           <Form.Item
@@ -92,7 +96,7 @@ const EntityAdd = () => {
           >
             <Input type="email" />
           </Form.Item>
-     
+
           <Form.Item
             label="Role"
             name="roleId"
@@ -100,12 +104,12 @@ const EntityAdd = () => {
           >
             <Select >
               {roles?.map(x =>
-                <Option key={x.key} value={x.key}>{x.name}</Option>
+                <Option key={x.id} value={x.id}>{x.name}</Option>
               )}
             </Select>
           </Form.Item>
 
-       
+
           <Form.Item >
             <Button type="primary" htmlType="submit">
               Agregar

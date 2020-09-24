@@ -8,17 +8,13 @@ import {
   Route,
   Link,
 } from "react-router-dom";
-import moment from 'moment';
-import DateRangePicker, { ValueType } from 'rsuite/lib/DateRangePicker';
-import { CSVLink } from "react-csv";
 
 const { Column } = Table;
 
 const Products = () => {
-  const [products, setProducts] = useState<Product[] | null>(null);
+  const [products, setProducts] = useState<Product[]>();
   const [loading, setLoading] = useState(false);
   const [fireEffect, setFireEffect] = useState(true);
-  const [rangePicker, setRangePicker] = useState<ValueType>([moment().subtract(30, 'd').toDate(), moment().toDate()])
 
   let { url } = useRouteMatch();
   const history = useHistory();
@@ -26,7 +22,7 @@ const Products = () => {
   useEffect(() => {
     console.log("Loading")
     setLoading(true)
-    getAll(moment(rangePicker[0]), moment(rangePicker[1]))
+    getAll()
       .then(response => {
         console.log(response)
         setProducts(response)
@@ -42,7 +38,7 @@ const Products = () => {
         });
       })
 
-  }, [fireEffect, rangePicker])
+  }, [fireEffect])
 
   async function confirm(v: number) {
     console.log(v)
@@ -72,95 +68,67 @@ const Products = () => {
     setFireEffect(!fireEffect)
   }
 
-  if (products === null) return (<div>Cargando...</div>)
-
   return (
     <main>
 
-      <div className="row">
-        <div className="col-6">
-          <DateRangePicker
-            placeholder="Fechas para reporte: "
-            style={{ width: 280 }}
-            value={rangePicker}
-            cleanable={false}
-            format={"MM-DD-YY"}
-            onChange={(v) => setRangePicker(v)}
-          />
-        </div>
+      <div className="row justify-content-end">
 
-        <div className="col-6 d-flex justify-content-end align-items-center">
-          <Link to={`${url}/agregar`} className="mr-3">Agregar nueva entidad</Link>
-          <Button type="primary">
-            <CSVLink
-              filename={`Reporte_${Date.now()}.csv`}
-              data={products}
-              headers={[{ label: "ID", key: "key" },
-              { key: "createdOn", label: "Fecha de registro" },
-              { key: "description", label: "Descripción" },
-              { key: "price", label: "Precio" },
-              { key: "name", label: "Nombre" },
-              { key: "categoryName", label: "Categoría" }
-              ]}>Descargar Reporte</CSVLink>
+        <div className="col-auto">
+
+          <Button>
+            <Link to={`${url}/agregar`}>Agregar nueva entidad</Link>
           </Button>
         </div>
       </div>
 
       <div className="row">
         <div className="col-12">
-          <Switch>
-            <Route exact path={`${url}`}>
-              <Table dataSource={products} bordered size={"small"} loading={loading} className="mt-3">
-                <Column
-                  title='#'
-                  key='key'
-                  render={(v) => (<div className="d-flex flex-row">
-                    <Popconfirm
-                      title="¿Estás seguro de borrar esta categoría?"
-                      onConfirm={() => confirm(v.key)}
-                      okText="Si"
-                      cancelText="No"
-                    >
-                      <Button type="link" className="p-0 m-1">Borrar</Button>
 
-                    </Popconfirm>
-                    <Button type="link" className="p-0 m-1" onClick={() => history.push(`${url}/editar/${v.key}`)}>Editar</Button>
-                  </div>)}
-                />
+          <Table dataSource={products} bordered size={"small"} loading={loading} className="mt-3" rowKey={"id"}
+          >
+            <Column
+              title='#'
+              key='id'
+              render={(v) => (<div className="d-flex flex-row">
+                <Popconfirm
+                  title="¿Estás seguro de borrar esta categoría?"
+                  onConfirm={() => confirm(v.id)}
+                  okText="Si"
+                  cancelText="No"
+                >
+                  <Button type="link" className="p-0 m-1">Borrar</Button>
 
-                <Column<Product>
-                  title='ID'
-                  dataIndex='key'
-                  key='key'
-                />
-                <Column<Product>
-                  title='Nombre'
-                  dataIndex='name'
-                  key='name'
-                />
-                <Column<Product>
-                  title='Categoría'
-                  dataIndex='categoryName'
-                  key='categoryName'
-                />
-                <Column<Product>
-                  title='Precio'
-                  dataIndex='price'
-                  key='price'
-                />
-                <Column<Product>
-                  title='Descripción'
-                  dataIndex='description'
-                  key='description'
-                />
-                <Column<Product>
-                  title='Fecha de Registro'
-                  dataIndex='createdOn'
-                  key='createdOn'
-                />
-              </Table>
-            </Route>
-          </Switch>
+                </Popconfirm>
+                <Button type="link" className="p-0 m-1" onClick={() => history.push(`${url}/editar/${v.id}`)}>Editar</Button>
+              </div>)}
+            />
+
+            <Column<Product>
+              title='ID'
+              dataIndex='id'
+              key='id'
+            />
+            <Column<Product>
+              title='Nombre'
+              dataIndex='name'
+              key='name'
+            />
+            <Column<Product>
+              title='Precio'
+              dataIndex='price'
+              key='price'
+            />
+            <Column<Product>
+              title='Descripción'
+              dataIndex='description'
+              key='description'
+            />
+            <Column<Product>
+              title='Fecha de Registro'
+              dataIndex='createdOn'
+              key='createdOn'
+            />
+          </Table>
         </div>
       </div>
     </main>

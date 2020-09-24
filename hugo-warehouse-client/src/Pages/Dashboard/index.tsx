@@ -1,7 +1,6 @@
 import React from 'react'
 import { Statistic, Card, Calendar } from 'antd';
 import { DotChartOutlined, UsergroupAddOutlined, BorderBottomOutlined } from "@ant-design/icons";
-import { Link } from 'react-router-dom';
 import moment from 'moment'
 import "./Dashboard.Style.scss"
 
@@ -15,7 +14,7 @@ const Dashboard = () => {
     <main>
       <section className="row">
         <div className="col-12">
-          <Card type="inner" title="Pantalla De Inicio" extra={<Link to={"/"}>Tabla de registros</Link>}>
+          <Card type="inner" title="Calendario">
             <Calendar fullscreen={false} className="calendar-dashboard" onSelect={() => { return }} />
           </Card>
         </div>

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { User } from '../../Interfaces/users.interface';
-import { useParams, useHistory } from 'react-router-dom';
+import { useParams, useHistory, Link } from 'react-router-dom';
 import { getById, update } from '../../Services/users.service';
 import { getAll as getUsers } from '../../Services/roles.service'
 import { Form, Input, Button, Card, notification, Select } from 'antd';
@@ -10,16 +10,20 @@ const { Option } = Select
 
 const EntityUpdate = () => {
   const { id } = useParams();
-  const [user, setUser] = useState<User | null>(null);
-  const [roles, setRoles] = useState<Role[] | null>();
+  const [user, setUser] = useState<User>();
+  const [roles, setRoles] = useState<Role[]>();
   const history = useHistory()
 
   const onFinish = (values: any) => {
     const entity = values as User;
     console.log('Success:', values);
-    update(entity.key, entity)
+    update(entity.id, entity)
       .then(() => {
-        history.push('/usuarios')
+        notification["success"]({
+          message: '¡Actualización Exitosa!',
+          description:
+            'La actualización se ha realizado correctamente.',
+        });
       })
       .catch((e) => {
         console.error(e)
@@ -40,12 +44,13 @@ const EntityUpdate = () => {
 
     getById(id)
       .then(result => {
+        console.log(result);
+
         setUser(result)
       })
       .then(() => {
         getUsers().then(result => setRoles(result))
       })
-
       .catch(e => {
         console.error(e)
       });
@@ -54,13 +59,13 @@ const EntityUpdate = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  if (user === null) return <div>Cargando...</div>
+  if (user === undefined) return <div>Cargando...</div>
 
   return (
 
     <main>
 
-      <Card type="inner" title={`Entidad ${user.name}`}>
+      <Card type="inner" title={`Entidad ${user.name}`}  extra={<Link to={"/usuarios"}>Regresar a lista de usuarios</Link>}>
 
         <Form
           name="basic"
@@ -69,18 +74,17 @@ const EntityUpdate = () => {
         >
           <Form.Item
             label="ID"
-            name="key"
-
-            initialValue={user.key}
+            name="id"
+            initialValue={user.id}
           >
             <Input disabled />
           </Form.Item>
 
           <Form.Item
             label="Usuario"
-            name="username"
+            name="userName"
             rules={[{ required: true, message: 'Valor requerido' }]}
-            initialValue={user.username}
+            initialValue={user.userName}
           >
             <Input type="text" />
           </Form.Item>
@@ -109,7 +113,7 @@ const EntityUpdate = () => {
             rules={[{ required: true, message: 'Valor requerido' }]}
             initialValue={user.age}
           >
-            <Input type="number"/>
+            <Input type="number" />
           </Form.Item>
 
           <Form.Item
@@ -120,7 +124,7 @@ const EntityUpdate = () => {
           >
             <Input type="email" />
           </Form.Item>
-     
+
           <Form.Item
             label="Role"
             name="roleId"
@@ -129,7 +133,7 @@ const EntityUpdate = () => {
           >
             <Select >
               {roles?.map(x =>
-                <Option key={x.key} value={x.key}>{x.name}</Option>
+                <Option key={x.id} value={x.id}>{x.name}</Option>
               )}
             </Select>
           </Form.Item>

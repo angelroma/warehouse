@@ -21,41 +21,17 @@ namespace HugoWarehouse.Controllers
         }
 
         // GET: api/Users
-        [HttpGet("GetAll")]
-        public async Task<List<Models.User>> GetUser()
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<User>>> GetUser()
         {
-            var users = await _context.User.Include(x => x.Role).Select(x => new Models.User()
-            {
-                Key = x.Id,
-                Age = x.Age,
-                CreatedOn = x.CreatedOn,
-                Email = x.Email,
-                Name = x.Email,
-                Password = x.Password,
-                RoleId = x.RoleId,
-                RoleName = x.Role.Name,
-                Username = x.UserName
-            }).ToListAsync();
-
-            return users;
+            return await _context.User.ToListAsync();
         }
 
         // GET: api/Users/5
-        [HttpGet("GetById/{id}")]
-        public async Task<ActionResult<Models.User>> GetUser(int id)
+        [HttpGet("{id}")]
+        public async Task<ActionResult<User>> GetUser(int id)
         {
-            var user = await _context.User.Select(x => new Models.User()
-            {
-                Key = x.Id,
-                Age = x.Age,
-                CreatedOn = x.CreatedOn,
-                Email = x.Email,
-                Name = x.Email,
-                Password = x.Password,
-                RoleId = x.RoleId,
-                RoleName = x.Role.Name,
-                Username = x.UserName
-            }).FirstOrDefaultAsync(x => x.Key == id);
+            var user = await _context.User.FindAsync(id);
 
             if (user == null)
             {
@@ -68,27 +44,15 @@ namespace HugoWarehouse.Controllers
         // PUT: api/Users/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
-        [HttpPut("Update/{id}")]
-        public async Task<IActionResult> PutUser(int id, Models.User user)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutUser(int id, User user)
         {
-            if (id != user.Key)
+            if (id != user.Id)
             {
                 return BadRequest();
             }
 
-            var newUser = new User()
-            {
-                Id = user.Key,
-                UserName = user.Username,
-                RoleId = user.RoleId,
-                Password = user.Password,
-                Age = user.Age,
-                CreatedOn = user.CreatedOn,
-                Email = user.Email,
-                Name = user.Name
-            };
-
-            _context.Entry(newUser).State = EntityState.Modified;
+            _context.Entry(user).State = EntityState.Modified;
 
             try
             {
@@ -100,36 +64,29 @@ namespace HugoWarehouse.Controllers
                 {
                     return NotFound();
                 }
-
-                throw;
+                else
+                {
+                    throw;
+                }
             }
 
             return NoContent();
         }
 
-        [HttpPost("Add")]
-        public async Task<ActionResult<User>> PostUser(Models.User user)
+        // POST: api/Users
+        // To protect from overposting attacks, enable the specific properties you want to bind to, for
+        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
+        [HttpPost]
+        public async Task<ActionResult<User>> PostUser(User user)
         {
-            User newUser = new User()
-            {
-                Id = user.Key,
-                UserName = user.Username,
-                RoleId = user.RoleId,
-                Password = user.Password,
-                Age = user.Age,
-                CreatedOn = user.CreatedOn,
-                Email = user.Email,
-                Name = user.Name
-            };
-
-            _context.User.Add(newUser);
+            _context.User.Add(user);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetUser", new { id = user.Key }, newUser);
+            return CreatedAtAction("GetUser", new { id = user.Id }, user);
         }
 
         // DELETE: api/Users/5
-        [HttpDelete("DeleteById/{id}")]
+        [HttpDelete("{id}")]
         public async Task<ActionResult<User>> DeleteUser(int id)
         {
             var user = await _context.User.FindAsync(id);

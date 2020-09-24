@@ -17,11 +17,13 @@ import Dashboard from './Pages/Dashboard'
 
 //Products
 import Products from './Pages/Products';
-import ProductAdd from './Pages/Products/Add';
+import ProductAdd from './Pages/Products/ProductAdd';
 import ProductUpdate from './Pages/Products/Update';
 
 //Categories
 import Categories from './Pages/Categories'
+import CategoryAdd from './Pages/Categories/Add'
+import CategoryUpdate from './Pages/Categories/Update'
 
 //Users
 import Users from './Pages/Users'
@@ -55,7 +57,6 @@ const App = () => {
             <Menu.Item key="6"><Link to="/registro" />Entrada y Salida</Menu.Item>
             <Menu.Item key="4"><Link to="/categorias" />Categorias</Menu.Item>
             <Menu.Item key="2"><Link to="/productos" />Productos</Menu.Item>
-            <Menu.Item key="5"><Link to="/atributos" />Atributos</Menu.Item>
             <Menu.Item key="3"><Link to="/usuarios" />Usuarios</Menu.Item>
           </Menu>
         </div>
@@ -72,11 +73,11 @@ const App = () => {
               <Route exact path="/productos" >
                 <Products />
               </Route>
-              <Route path={`/productos/editar/:id`}>
-                <ProductUpdate />
-              </Route>
               <Route path={`/productos/agregar`}>
                 <ProductAdd />
+              </Route>
+              <Route path={`/productos/editar/:id`}>
+                <ProductUpdate />
               </Route>
 
               <Route exact path="/usuarios" >
@@ -89,9 +90,18 @@ const App = () => {
                 <UserAdd />
               </Route>
 
-              <Route path="/categorias">
+              <Route exact path="/categorias">
                 <Categories />
               </Route>
+
+              <Route path={`/categorias/editar/:id`}>
+                <CategoryUpdate />
+              </Route>
+
+              <Route path={`/categorias/agregar`}>
+                <CategoryAdd />
+              </Route>
+
 
               <Route path="*">
                 <Dashboard />

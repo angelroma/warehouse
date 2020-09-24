@@ -10,8 +10,8 @@ namespace HugoWarehouse.Models.Poco
         public int UserId { get; set; }
         public int ProductId { get; set; }
         public string Description { get; set; }
-        public DateTime CreatedOn { get; set; }
         public int Quantity { get; set; }
+        public DateTime CreatedOn { get; set; }
 
         public virtual OperationType IdNavigation { get; set; }
         public virtual Product Product { get; set; }

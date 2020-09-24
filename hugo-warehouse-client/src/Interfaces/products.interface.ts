@@ -1,22 +1,20 @@
-import { Attribute } from "./attributes.interface";
+import { Category } from "./categories.interface";
+import { Provider } from "./providers.interface";
 
 export interface Product {
-  key: number
-  name: string
-  description: string
-  createdOn: string
-  price: number
-  categoryId: number
-  categoryName: string
-  productAttributes: ProductAttribute[]
-}
-
-export interface ProductAttribute {
-  productId: number
-  attributeId : number
-  value: string
-}
-
-export interface CustomParams extends Attribute {
-  value: string
+  id: number;
+  categoryId: number;
+  providerId: number;
+  name: string;
+  description: string;
+  price: number;
+  sku: string;
+  color: string;
+  size: number;
+  weight: number;
+  precision: number;
+  brand: string;
+  createdOn: Date;
+  category?: Category;
+  operation?: Provider;
 }

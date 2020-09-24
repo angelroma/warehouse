@@ -13,7 +13,7 @@ import CategoryAdd from './Add';
 const { Column } = Table;
 
 const Categories = () => {
-  const [entities, setEntities] = useState<Category[] | null>(null);
+  const [entities, setEntities] = useState<Category[]>();
   const [loading, setLoading] = useState(false);
   const [fireEffect, setFireEffect] = useState(true);
   let { url } = useRouteMatch();
@@ -66,69 +66,65 @@ const Categories = () => {
     setFireEffect(!fireEffect)
   }
 
-  if (entities === null) return (<div>Cargando...</div>)
+  if (entities === undefined) return (<div>Cargando...</div>)
 
   return (
     <main>
+
+
+      <div className="row justify-content-end">
+
+        <div className="col-auto">
+
+          <Button>
+            <Link to={`${url}/agregar`}>Agregar nueva entidad</Link>
+          </Button>
+        </div>
+      </div>
+
       <div className="row">
+
         <div className="col-12">
 
+          <Table dataSource={entities} bordered size={"small"} loading={loading} className="mt-3" rowKey="id">
+            <Column
+              title='#'
+              key='id'
+              render={(v) => (<div className="d-flex flex-row">
+                <Popconfirm
+                  title="¿Estás seguro de borrar esta categoría?"
+                  onConfirm={() => confirm(v.id)}
+                  okText="Si"
+                  cancelText="No"
+                >
+                  <Button type="link" className="p-0 m-1">Borrar</Button>
 
-          <Switch>
+                </Popconfirm>
+                <Button type="link" className="p-0 m-1" onClick={() => history.push(`${url}/editar/${v.id}`)}>Editar</Button>
+              </div>)}
+            />
 
-            <Route exact path={`${url}`}>
-
-              <Link to={`${url}/agregar`}>Agregar nueva entidad</Link>
-
-              <Table dataSource={entities} bordered size={"small"} loading={loading} className="mt-3">
-                <Column
-                  title='#'
-                  key='key'
-                  render={(v) => (<div className="d-flex flex-row">
-                    <Popconfirm
-                      title="¿Estás seguro de borrar esta categoría?"
-                      onConfirm={() => confirm(v.key)}
-                      okText="Si"
-                      cancelText="No"
-                    >
-                      <Button type="link" className="p-0 m-1">Borrar</Button>
-
-                    </Popconfirm>
-                    <Button type="link" className="p-0 m-1" onClick={() => history.push(`${url}/editar/${v.key}`)}>Editar</Button>
-                  </div>)}
-                />
-
-                <Column<Category>
-                  title='ID'
-                  dataIndex='key'
-                  key='key'
-                />
-                <Column<Category>
-                  title='Nombre'
-                  dataIndex='name'
-                  key='name'
-                />
-                <Column<Category>
-                  title='Descripción'
-                  dataIndex='description'
-                  key='description'
-                />
-                <Column<Category>
-                  title='Fecha de Registro'
-                  dataIndex='createdOn'
-                  key='createdOn'
-                />
-              </Table>
-            </Route>
-            <Route path={`${url}/editar/:id`}>
-              <CategoryUpdate />
-            </Route>
-
-            <Route path={`${url}/agregar`}>
-              <CategoryAdd setFireEffect={swithFireEffect} />
-            </Route>
-          </Switch>
-
+            <Column<Category>
+              title='ID'
+              dataIndex='id'
+              key='od'
+            />
+            <Column<Category>
+              title='Nombre'
+              dataIndex='name'
+              key='name'
+            />
+            <Column<Category>
+              title='Descripción'
+              dataIndex='description'
+              key='description'
+            />
+            <Column<Category>
+              title='Fecha de Registro'
+              dataIndex='createdOn'
+              key='createdOn'
+            />
+          </Table>
 
         </div>
       </div>

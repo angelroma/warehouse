@@ -2,13 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using HugoWarehouse.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using HugoWarehouse.Models.Poco;
-using HugoWarehouse.Models.Responses;
-using Attribute = HugoWarehouse.Models.Poco.Attribute;
 
 namespace HugoWarehouse.Controllers
 {
@@ -23,78 +20,38 @@ namespace HugoWarehouse.Controllers
             _context = context;
         }
 
-        public class GetAllRequest
-        {
-            public DateTime StartDate { get; set; }
-            public DateTime EndDate { get; set; }
-        }
-
         // GET: api/Products
-        [HttpPost("GetAll")]
-        public async Task<List<ProductModel>> GetProduct([FromBody] GetAllRequest request)
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<Product>>> GetProduct()
         {
-            var result = await (from product in _context.Product
-                                join category in _context.Category on product.CategoryId equals category.Id
-                                where product.CreatedOn >= request.StartDate && product.CreatedOn <= request.EndDate
-                                select new ProductModel
-                                {
-                                    Key = product.Id,
-                                    CategoryId = category.Id,
-                                    CategoryName = category.Name,
-                                    CreatedOn = product.CreatedOn,
-                                    Description = product.Description,
-                                    Name = product.Name,
-                                    Price = product.Price
-                                }).ToListAsync();
-
-            return result;
+            return await _context.Product
+                .ToListAsync();
         }
 
         // GET: api/Products/5
-        [HttpGet("GetById/{id}")]
-        public async Task<ActionResult<ProductModel>> GetProduct(int id)
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Product>> GetProduct(int id)
         {
-            var product = await _context.Product.Include(x => x.Category).FirstOrDefaultAsync(x => x.Id == id);
+            var product = await _context.Product.FindAsync(id);
 
             if (product == null)
             {
                 return NotFound();
             }
 
-            var model = new ProductModel()
-            {
-                Key = product.Id,
-                CategoryId = product.CategoryId,
-                CategoryName = product.Category.Name,
-                CreatedOn = product.CreatedOn,
-                Description = product.Description,
-                Name = product.Name,
-                Price = product.Price
-            };
-
-            return model;
+            return product;
         }
 
         // PUT: api/Products/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
-        [HttpPut("Update/{id}")]
-        public async Task<IActionResult> PutProduct(int id, ProductModel model)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutProduct(int id, Product product)
         {
-            if (id != model.Key)
+            if (id != product.Id)
             {
                 return BadRequest();
             }
-
-            var product = new Product()
-            {
-                Id = model.Key,
-                CategoryId = model.CategoryId,
-                Description = model.Description,
-                Name = model.Name,
-                Price = model.Price,
-                CreatedOn = model.CreatedOn
-            };
 
             _context.Entry(product).State = EntityState.Modified;
 
@@ -120,37 +77,20 @@ namespace HugoWarehouse.Controllers
         // POST: api/Products
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
-        [HttpPost("Add")]
-        public async Task<ActionResult<ProductModel>> PostProduct(ProductModel model)
+        [HttpPost]
+        public async Task<ActionResult<Product>> PostProduct(Product product)
         {
-            var product = new Product()
-            {
-                CategoryId = model.CategoryId,
-                Description = model.Description,
-                Name = model.Description,
-                Price = model.Price
-            };
-
             _context.Product.Add(product);
-            await _context.SaveChangesAsync();
-
-            foreach (var attribute in model.ProductAttributes)
-            {
-                attribute.ProductId = product.Id;
-            }
-            _context.ProductAttribute.AddRange(model.ProductAttributes);
-
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetProduct", new { id = product.Id }, product);
         }
 
         // DELETE: api/Products/5
-        [HttpDelete("DeleteById/{id}")]
-        public async Task<ActionResult<ProductModel>> DeleteProduct(int id)
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<Product>> DeleteProduct(int id)
         {
-            var product = await _context.Product.Include(x => x.Category).FirstOrDefaultAsync(x => x.Id == id);
-
+            var product = await _context.Product.FindAsync(id);
             if (product == null)
             {
                 return NotFound();
@@ -159,18 +99,7 @@ namespace HugoWarehouse.Controllers
             _context.Product.Remove(product);
             await _context.SaveChangesAsync();
 
-            var model = new ProductModel()
-            {
-                Key = product.Id,
-                CategoryId = product.CategoryId,
-                CategoryName = product.Category.Name,
-                CreatedOn = product.CreatedOn,
-                Description = product.Description,
-                Name = product.Name,
-                Price = product.Price
-            };
-
-            return model;
+            return product;
         }
 
         private bool ProductExists(int id)

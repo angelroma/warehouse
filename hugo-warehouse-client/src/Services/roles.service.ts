@@ -1,9 +1,9 @@
 import { Role } from "../Interfaces/roles.interface";
 import { api } from "../Utils/api.util";
 
-export const getAll = async (): Promise<Role[]> => {
+export const getAll = async () => {
   try {
-    const response = await api.get(`/roles/GetAll`)
+    const response = await api.get(`/roles`)
     const entities = response.data as Role[]
     return entities;
   }

@@ -1,23 +1,18 @@
 import React, { useEffect} from 'react'
-import {  CategoryRequest } from '../../Interfaces/categories.interface';
 import { Link } from 'react-router-dom';
 import {  add } from '../../Services/categories.service';
 import { Form, Input, Button, Card, notification } from 'antd';
 import { Store } from 'antd/lib/form/interface';
-
-interface Props {
-  setFireEffect: () => void
-}
-
-const CategoriesUpdatePage = (props: Props) => {
+import { Category } from '../../Interfaces/categories.interface';
 
 
+
+const CategoriesUpdatePage = () => {
   const onFinish = (values: Store) => {
-    const category: CategoryRequest = { id: values.key, name: values.name, description: values.description, createdOn: values.createdOn }
+    const category: Category = { id: values.id, name: values.name, description: values.description, createdOn: values.createdOn }
     console.log('Success:', values);
     add(category)
       .then(() => {
-        props.setFireEffect();
         notification["success"]({
           message: '¡Perfecto!',
           description:

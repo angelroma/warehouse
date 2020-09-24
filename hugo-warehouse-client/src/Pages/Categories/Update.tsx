@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import { Category, CategoryRequest } from '../../Interfaces/categories.interface';
-import { useParams, useHistory } from 'react-router-dom';
+import { Category } from '../../Interfaces/categories.interface';
+import { useParams, useHistory, Link } from 'react-router-dom';
 import { getById, update } from '../../Services/categories.service';
 import { Form, Input, Button, Card, notification } from 'antd';
 import { Store } from 'antd/lib/form/interface';
@@ -11,12 +11,15 @@ const CategoryUpdate = () => {
   const history = useHistory()
 
   const onFinish = (values: Store) => {
-    const category: CategoryRequest = { id: values.key, name: values.name, description: values.description, createdOn: values.createdOn }
+    const category: Category = { id: values.id, name: values.name, description: values.description, createdOn: values.createdOn }
     console.log('Success:', values);
     update(category.id, category)
       .then(() => {
-        history.push('/categorias')
-      })
+        notification["success"]({
+          message: '¡Actualización Exitosa!',
+          description:
+            'La actualización se ha realizado correctamente.',
+        });      })
       .catch(e => {
         notification["error"]({
           message: 'Error al actualizar',
@@ -33,9 +36,7 @@ const CategoryUpdate = () => {
   useEffect(() => {
     getById(id)
       .then(result => {
-        console.log(result)
-        const category = { key: result.id, name: result.name, description: result.description, createdOn: result.createdOn } as Category
-        setCategory(category)
+        setCategory(result)
       })
       .catch(e => {
 
@@ -50,7 +51,7 @@ const CategoryUpdate = () => {
 
     <main>
 
-      <Card type="inner" title={`Categoria ${category.name}`}>
+      <Card type="inner" title={`Categoria ${category.name}`}  extra={<Link to={"/categorias"}>Regresar a lista de categorías</Link>}>
 
         <Form
           name="basic"
@@ -59,9 +60,9 @@ const CategoryUpdate = () => {
         >
           <Form.Item
             label="ID"
-            name="key"
+            name="id"
 
-            initialValue={category.key}
+            initialValue={category.id}
           >
             <Input disabled />
           </Form.Item>
