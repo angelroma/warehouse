@@ -2,19 +2,23 @@ import React, { useEffect, useState } from 'react'
 import { Table, notification, Button, Popconfirm, Modal, Card, Form, Input, Select, Spin } from 'antd';
 import { User } from '../../Interfaces/users.interface';
 import { getAll as getAllUsers, remove } from '../../Entitites/User/repository'
-import { useRouteMatch, useHistory } from 'react-router-dom';
-import { Role } from '../../Interfaces/roles.interface';
 import { useForm } from 'antd/lib/form/Form';
+import { getAll as getAllRoles } from '../../Entitites/Role/repository';
+import { Role } from '../../Entitites/Role/interface';
+
 const { Column } = Table;
 const { Option } = Select;
 
+const layout = {
+  labelCol: { span: 6 },
+  wrapperCol: { span: 15 }
+}
+
 const MainEntity = () => {
-  let { url } = useRouteMatch();
-  const history = useHistory();
   const [form] = useForm();
 
-  const [users, setUsers] = useState<User[]>();
   const [roles, setRoles] = useState<Role[]>();
+  const [users, setUsers] = useState<User[]>();
   const [loading, setLoading] = useState(false);
 
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -59,17 +63,23 @@ const MainEntity = () => {
     setLoading(false)
   }
 
-
-
   async function handleOpenEmptyForm() {
     setIsModalOpen(true);
     setIsModalLoading(true);
+    form.resetFields();
 
+    getAllRoles().then((roles) => setRoles(roles));
+    setIsModalLoading(false);
   }
 
   async function handleOpenEditForm() {
     setIsModalOpen(true);
     setIsModalLoading(true);
+  }
+
+  async function handleSaveForm() {
+
+
   }
 
   return (
@@ -136,8 +146,11 @@ const MainEntity = () => {
         </div>
       </div>
 
-      <Modal visible={isModalOpen}>
-
+      <Modal
+        title={"Formulario"}
+        visible={isModalOpen}
+        onOk={() => handleSaveForm()}
+      >
         <Spin spinning={isModalLoading} tip={"Cargando..."}>
           <Form
             form={form}
@@ -154,48 +167,71 @@ const MainEntity = () => {
               label="Usuario"
               name="userName"
               rules={[{ required: true, message: 'Valor requerido' }]}
+              {...layout}
             >
-              <Input />
+              <Input
+                placeholder="Escribe tu nombre de usuario"
+              />
             </Form.Item>
 
             <Form.Item
               label="Contraseña"
               name="password"
               rules={[{ required: true, message: 'Valor requerido' }]}
+              {...layout}
+
             >
-              <Input type="password" />
+              <Input
+                placeholder="Escribe tu contraseña"
+                type="password" />
             </Form.Item>
 
             <Form.Item
               label="Nombre"
               name="name"
               rules={[{ required: true, message: 'Valor requerido' }]}
+              {...layout}
+
             >
-              <Input />
+              <Input
+                placeholder="Escribe tu nombre completo"
+              />
             </Form.Item>
 
             <Form.Item
               label="Edad"
               name="age"
               rules={[{ required: true, message: 'Valor requerido' }]}
+              {...layout}
+
             >
-              <Input type="number" />
+              <Input
+                placeholder="Escribe tu edad"
+                type="number" />
             </Form.Item>
 
             <Form.Item
               label="Email"
               name="email"
               rules={[{ required: true, message: 'Valor requerido' }]}
+              {...layout}
+
             >
-              <Input type="email" />
+              <Input
+                placeholder="Escribe tu email"
+                type="email" />
             </Form.Item>
 
             <Form.Item
               label="Role"
               name="roleId"
               rules={[{ required: true, message: 'Valor requerido' }]}
+              {...layout}
+
             >
-              <Select >
+              <Select
+                placeholder="Selecciona un role"
+              >
                 {roles?.map(x =>
                   <Option key={x.id} value={x.id}>{x.name}</Option>
                 )}
@@ -204,6 +240,7 @@ const MainEntity = () => {
 
           </Form>
         </Spin>
+
       </Modal>
 
 

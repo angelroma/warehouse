@@ -15,15 +15,11 @@ import Login from './Pages/Login/LoginPage'
 //Dashboard
 import Dashboard from './Pages/Dashboard'
 
-//Products
-import Products from './Pages/Products';
-import ProductAdd from './Pages/Products/ProductAdd';
-import ProductUpdate from './Pages/Products/Update';
+// //Products
+// import Products from './Pages/Products';
 
-//Categories
-import Categories from './Pages/Categories'
-import CategoryAdd from './Pages/Categories/Add'
-import CategoryUpdate from './Pages/Categories/Update'
+// //Categories
+// import Categories from './Pages/Categories'
 
 //Users
 import Users from './Pages/Users'
@@ -68,31 +64,17 @@ const App = () => {
                 <Dashboard />
               </Route>
 
-              <Route exact path="/productos" >
-                <Products />
-              </Route>
-              <Route path={`/productos/agregar`}>
-                <ProductAdd />
-              </Route>
-              <Route path={`/productos/editar/:id`}>
-                <ProductUpdate />
-              </Route>
-
               <Route path="/usuarios" >
                 <Users />
               </Route>
 
+              {/* <Route exact path="/productos" >
+                <Products />
+              </Route>
+
               <Route exact path="/categorias">
                 <Categories />
-              </Route>
-
-              <Route path={`/categorias/editar/:id`}>
-                <CategoryUpdate />
-              </Route>
-
-              <Route path={`/categorias/agregar`}>
-                <CategoryAdd />
-              </Route>
+              </Route> */}
 
               <Route path="*">
                 <Dashboard />

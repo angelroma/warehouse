@@ -1,15 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import { Table, notification, Button, Popconfirm } from 'antd';
 import { Category } from '../../Interfaces/categories.interface';
-import { getAll, deleteById } from '../../Services/categories.service';
 import { useRouteMatch, useHistory } from 'react-router-dom';
-import {
-  Switch,
-  Route,
-  Link,
-} from "react-router-dom";
-import CategoryUpdate from './Update';
-import CategoryAdd from './Add';
+import { getAll, remove } from '../../Entitites/Category/repository';
+
 const { Column } = Table;
 
 const Categories = () => {
@@ -42,7 +36,7 @@ const Categories = () => {
     console.log(v)
     setLoading(true)
 
-    await deleteById(v)
+    await remove(v)
       .then(x => {
         notification["success"]({
           message: '¡Perfecto!',
@@ -77,7 +71,7 @@ const Categories = () => {
         <div className="col-auto">
 
           <Button>
-            <Link to={`${url}/agregar`}>Agregar nueva entidad</Link>
+            Agregar nueva entidad
           </Button>
         </div>
       </div>
@@ -128,6 +122,80 @@ const Categories = () => {
 
         </div>
       </div>
+
+
+      {/* <Modal visible={isModalOpen}>
+
+        <Spin spinning={isModalLoading} tip={"Cargando..."}>
+          <Form
+            form={form}
+            name="basic"
+          >
+            <Form.Item
+              hidden
+              name="id"
+            >
+              <Input />
+            </Form.Item>
+
+            <Form.Item
+              label="Usuario"
+              name="userName"
+              rules={[{ required: true, message: 'Valor requerido' }]}
+            >
+              <Input />
+            </Form.Item>
+
+            <Form.Item
+              label="Contraseña"
+              name="password"
+              rules={[{ required: true, message: 'Valor requerido' }]}
+            >
+              <Input type="password" />
+            </Form.Item>
+
+            <Form.Item
+              label="Nombre"
+              name="name"
+              rules={[{ required: true, message: 'Valor requerido' }]}
+            >
+              <Input />
+            </Form.Item>
+
+            <Form.Item
+              label="Edad"
+              name="age"
+              rules={[{ required: true, message: 'Valor requerido' }]}
+            >
+              <Input type="number" />
+            </Form.Item>
+
+            <Form.Item
+              label="Email"
+              name="email"
+              rules={[{ required: true, message: 'Valor requerido' }]}
+            >
+              <Input type="email" />
+            </Form.Item>
+
+            <Form.Item
+              label="Role"
+              name="roleId"
+              rules={[{ required: true, message: 'Valor requerido' }]}
+            >
+              <Select >
+                {roles?.map(x =>
+                  <Option key={x.id} value={x.id}>{x.name}</Option>
+                )}
+              </Select>
+            </Form.Item>
+
+          </Form>
+        </Spin>
+      </Modal> */}
+
+
+
     </main>
   )
 }

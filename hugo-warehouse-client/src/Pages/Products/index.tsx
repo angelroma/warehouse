@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import { Table, notification, Button, Popconfirm } from 'antd';
 import { Product } from '../../Interfaces/products.interface';
-import { getAll, deleteById } from '../../Services/products.service';
 import { useRouteMatch, useHistory } from 'react-router-dom';
 import {
   Switch,
   Route,
   Link,
 } from "react-router-dom";
+import { getAll, remove } from '../../Entitites/Product/respository';
 
 const { Column } = Table;
 
@@ -44,7 +44,7 @@ const Products = () => {
     console.log(v)
     setLoading(true)
 
-    await deleteById(v)
+    await remove(v)
       .then(x => {
         notification["success"]({
           message: '¡Perfecto!',
@@ -131,6 +131,131 @@ const Products = () => {
           </Table>
         </div>
       </div>
+
+
+
+      {/* <Form
+              form={form}
+              {...layout}
+              name="basic"
+              onFinish={onFinish}
+              onFinishFailed={onFinishFailed}
+            >
+              <Form.Item
+                label="nombre"
+                name="name"
+                rules={[{ required: true }]}
+
+              >
+                <Input />
+              </Form.Item>
+
+              <Form.Item
+                label="descripción"
+                name="description"
+                rules={[{ required: true }]}
+
+              >
+                <Input />
+              </Form.Item>
+
+              <Form.Item
+                label="precio"
+                name="price"
+                rules={[{ required: true }]}
+
+              >
+                <Input type='number' />
+              </Form.Item>
+
+              <Form.Item
+                label="categoria"
+                name="categoryId"
+                rules={[{ required: true }]}
+
+              >
+                <Select >
+                  {categories?.map((value, index) =>
+                    <Option key={index} value={value.id}>{value.name}</Option>
+                  )}
+                </Select>
+              </Form.Item>
+
+              <Form.Item
+                label="proveedor"
+                name="providerId"
+                rules={[{ required: true }]}
+
+              >
+                <Select >
+                  {providers?.map((value, index) =>
+                    <Option key={index} value={value.id}>{value.name}</Option>
+                  )}
+                </Select>
+              </Form.Item>
+
+              <Form.Item
+                label="sku"
+                name="sku"
+                rules={[{ required: true }]}
+
+              >
+                <Input />
+              </Form.Item>
+
+              <Form.Item
+                label="color"
+                name="color"
+                rules={[{ required: true }]}
+
+              >
+                <Input />
+              </Form.Item>
+
+              <Form.Item
+                label="tamaño"
+                name="size"
+                rules={[{ required: true }]}
+
+              >
+                <Input />
+              </Form.Item>
+
+              <Form.Item
+                label="peso"
+                name="weight"
+                rules={[{ required: true }]}
+
+              >
+                <Input />
+              </Form.Item>
+
+              <Form.Item
+                label="presición"
+                name="precision"
+                rules={[{ required: true }]}
+              >
+                <Input />
+              </Form.Item>
+
+              <Form.Item
+                label="marca"
+                name="brand"
+                rules={[{ required: true }]}
+
+              >
+                <Input />
+              </Form.Item>
+
+              <Form.Item >
+                <Button type="primary" htmlType="submit">
+                  Agregar producto
+        </Button>
+              </Form.Item>
+            </Form> */}
+
+
+
     </main>
   )
 }
