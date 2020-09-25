@@ -1,4 +1,4 @@
-import { Category } from "../../Interfaces/categories.interface";
+import { Category } from "../../Entitites/Category/interface";
 import { api } from "../../Utils/api.util";
 
 const path = '/categories'

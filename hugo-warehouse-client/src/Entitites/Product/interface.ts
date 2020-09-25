@@ -1,5 +1,5 @@
 import { Provider } from "../Provider/interface";
-import { Category } from "../../Interfaces/categories.interface";
+import { Category } from "../../Entitites/Category/interface";
 import { Operation } from "../Operation/interface";
 
 export interface Product {
@@ -15,6 +15,7 @@ export interface Product {
     weight: number;
     precision: number;
     brand: string;
+    currentTotal:number;
     createdOn: Date;
     category?: Category;
     provider?: Provider;

@@ -1,4 +1,4 @@
-import { Product } from "../../Interfaces/products.interface";
+import { Product } from "../../Entitites/Product/interface";
 import { api } from "../../Utils/api.util";
 
 const path = '/products'

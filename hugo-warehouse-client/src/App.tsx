@@ -7,31 +7,24 @@ import {
 import { Menu } from 'antd';
 import { useSelector } from 'react-redux'
 import { RootState } from './Store'
-import { loginByStorageService } from './Services/auth.service';
+import { loginByToken, logout } from './Entitites/Auth/repository';
 
-//Login
-import Login from './Pages/Login/LoginPage'
-
-//Dashboard
-import Dashboard from './Pages/Dashboard'
-
-// //Products
-// import Products from './Pages/Products';
-
-// //Categories
-// import Categories from './Pages/Categories'
-
-//Users
+import Login from './Pages/Login/LoginPage';
+import Dashboard from './Pages/Dashboard';
+import Products from './Pages/Products/index';
+import Categories from './Pages/Categories';
+import Providers from './Pages/Providers';
+import Operations from './Pages/Operations';
 import Users from './Pages/Users'
 
 const App = () => {
   const isAuthenticated = useSelector<RootState>(state => state.auth_reducer.isAuthenticated);
 
   useEffect(() => {
-    loginByStorageService();
+    loginByToken();
   }, [])
 
-  // console.log("Store of auth", isAuthenticated);
+  console.log("Store of auth", isAuthenticated);
 
   if (isAuthenticated === false)
     return (
@@ -48,10 +41,14 @@ const App = () => {
         <div className="col-12">
           <Menu theme="dark" mode="horizontal">
             <Menu.Item key="1"><Link to="/" />Inicio</Menu.Item>
-            <Menu.Item key="6"><Link to="/registro" />Entrada y Salida</Menu.Item>
+            <Menu.Item key="6"><Link to="/operaciones" />Entrada y Salida</Menu.Item>
             <Menu.Item key="4"><Link to="/categorias" />Categorias</Menu.Item>
+            <Menu.Item key="7"><Link to="/proveedores" />Proveedores </Menu.Item>
             <Menu.Item key="2"><Link to="/productos" />Productos</Menu.Item>
             <Menu.Item key="3"><Link to="/usuarios" />Usuarios</Menu.Item>
+            <Menu.Item key="8" style={{ float: 'right' }} onClick={() => {
+              return logout()
+            }}> Cerrar Sesión</Menu.Item>
           </Menu>
         </div>
       </section>
@@ -68,13 +65,22 @@ const App = () => {
                 <Users />
               </Route>
 
-              {/* <Route exact path="/productos" >
+              <Route path="/operaciones" >
+                <Operations />
+              </Route>
+
+
+              <Route exact path="/productos" >
                 <Products />
               </Route>
 
               <Route exact path="/categorias">
                 <Categories />
-              </Route> */}
+              </Route>
+
+              <Route exact path="/proveedores">
+                <Providers />
+              </Route>
 
               <Route path="*">
                 <Dashboard />

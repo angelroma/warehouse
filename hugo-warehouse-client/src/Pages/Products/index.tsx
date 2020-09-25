@@ -1,97 +1,163 @@
 import React, { useEffect, useState } from 'react'
-import { Table, notification, Button, Popconfirm } from 'antd';
-import { Product } from '../../Interfaces/products.interface';
-import { useRouteMatch, useHistory } from 'react-router-dom';
-import {
-  Switch,
-  Route,
-  Link,
-} from "react-router-dom";
-import { getAll, remove } from '../../Entitites/Product/respository';
+import { Table, notification, Button, Popconfirm, Modal, Form, Input, Select, Spin } from 'antd';
+import { add, getAll as getAllProducts, remove, update, getById, getAll } from '../../Entitites/Product/respository'
+import { useForm } from 'antd/lib/form/Form';
+import { getAll as getAllCategories } from '../../Entitites/Category/repository';
+import { getAll as getAllProividers } from '../../Entitites/Provider/repository';
+import moment from 'moment';
+import { Category } from '../../Entitites/Category/interface';
+import { Product } from '../../Entitites/Product/interface';
+import { Provider } from '../../Entitites/Provider/interface';
 
 const { Column } = Table;
+const { Option } = Select;
 
-const Products = () => {
-  const [products, setProducts] = useState<Product[]>();
+const layout = {
+  labelCol: { span: 6 },
+  wrapperCol: { span: 15 }
+}
+
+const MainEntity = () => {
+  const [form] = useForm();
+
+  const [categories, setCategories] = useState<Category[]>();
+  const [providers, setProviders] = useState<Provider[]>();
+  const [product, setProduct] = useState<Product[]>();
   const [loading, setLoading] = useState(false);
-  const [fireEffect, setFireEffect] = useState(true);
 
-  let { url } = useRouteMatch();
-  const history = useHistory();
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [isModalLoading, setIsModalLoading] = useState<boolean>(false);
+  const [isSavingForm, setIsSavingForm] = useState<boolean>(false);
+
+  async function fetchAll() {
+    try {
+      await getAllProducts().then((users) => setProduct(users));
+    } catch (error) {
+      notification["error"]({
+        message: "Error",
+        description:
+          'No se pueden adquirir los usuarios.',
+      });
+    }
+  }
 
   useEffect(() => {
-    console.log("Loading")
     setLoading(true)
-    getAll()
-      .then(response => {
-        console.log(response)
-        setProducts(response)
-        setLoading(false)
-      })
-      .catch(e => {
-        setLoading(false)
-        console.error(e)
-        notification["error"]({
-          message: "Error",
-          description:
-            'No se pueden adquirir las entidades.',
-        });
-      })
-
-  }, [fireEffect])
+    fetchAll().then(() => setLoading(false))
+  }, [])
 
   async function confirm(v: number) {
-    console.log(v)
-    setLoading(true)
+    setLoading(true);
 
-    await remove(v)
-      .then(x => {
-        notification["success"]({
-          message: '¡Perfecto!',
-          description:
-            'La entidad se borró con éxito',
-        });
-      })
-      .then(() => { swithFireEffect() })
-      .catch(() => {
-        notification["error"]({
-          message: "Error",
-          description:
-            'La entidad no se puede borrar, contacte al administrador.',
-        });
-      })
+    try {
+      await remove(v);
+      await getAll().then((result) => setProduct(result));
+
+      notification["success"]({
+        message: '¡Perfecto!',
+        description:
+          'La entidad se borró con éxito',
+      });
+    } catch (error) {
+      notification["error"]({
+        message: "Error",
+        description:
+          'La entidad no se puede borrar, contacte al administrador.',
+      });
+    }
 
     setLoading(false)
   }
 
-  function swithFireEffect() {
-    setFireEffect(!fireEffect)
+  async function handleOpenEmptyForm() {
+    setIsModalOpen(true);
+    setIsModalLoading(true);
+    form.resetFields();
+
+    getAllCategories().then((roles) => setCategories(roles));
+    getAllProividers().then((providers) => setProviders(providers));
+
+    setIsModalLoading(false);
+  }
+
+  async function handleOpenEditForm(id: number) {
+    setIsModalOpen(true);
+    setIsModalLoading(true);
+    try {
+      const entityToEdit = await getById(id);
+      getAllCategories().then((roles) => setCategories(roles));
+      getAllProividers().then((providers) => setProviders(providers));
+
+      form.setFieldsValue(entityToEdit);
+      setIsModalLoading(false);
+
+    } catch (error) {
+      notification["error"]({
+        message: "Error",
+        description:
+          'Hay un error al actualizar o al actualizar.',
+      });
+      setIsModalLoading(false);
+    }
+  }
+
+  async function handleSaveForm() {
+    await form.validateFields();
+
+    try {
+      setIsSavingForm(true)
+
+      const entityForm = form.getFieldsValue() as Product;
+
+      entityForm.createdOn = moment().toDate();
+      entityForm.precision = Number(entityForm.precision);
+      entityForm.size = Number(entityForm.size);
+      entityForm.weight = Number(entityForm.weight);
+
+      if (entityForm.id === undefined) {
+        await add(entityForm);
+      }
+      else await update(entityForm.id, entityForm);
+
+      await fetchAll();
+
+      setIsSavingForm(false);
+      setIsModalOpen(false);
+    } catch (error) {
+      notification["error"]({
+        message: "Error",
+        description:
+          'Hay un error al actualizar o al actualizar.',
+      });
+      setIsSavingForm(false);
+    }
+  }
+
+  async function handleCancelForm() {
+    setIsSavingForm(false);
+    setIsModalOpen(false);
+    form.resetFields();
   }
 
   return (
     <main>
-
       <div className="row justify-content-end">
 
         <div className="col-auto">
-
-          <Button>
-            <Link to={`${url}/agregar`}>Agregar nueva entidad</Link>
+          <Button onClick={() => handleOpenEmptyForm()}>
+            Agregar nueva entidad
           </Button>
         </div>
       </div>
-
       <div className="row">
         <div className="col-12">
-
-          <Table dataSource={products} bordered size={"small"} loading={loading} className="mt-3" rowKey={"id"}
-          >
-            <Column
+          <Table dataSource={product} bordered size={"small"} loading={loading} className="mt-3" rowKey="id">
+            <Column<Product>
               title='#'
               key='id'
               render={(v) => (<div className="d-flex flex-row">
                 <Popconfirm
-                  title="¿Estás seguro de borrar esta categoría?"
+                  title="La entidad solo se podrá borrar si no tiene dependientes."
                   onConfirm={() => confirm(v.id)}
                   okText="Si"
                   cancelText="No"
@@ -99,7 +165,7 @@ const Products = () => {
                   <Button type="link" className="p-0 m-1">Borrar</Button>
 
                 </Popconfirm>
-                <Button type="link" className="p-0 m-1" onClick={() => history.push(`${url}/editar/${v.id}`)}>Editar</Button>
+                <Button type="link" className="p-0 m-1" onClick={() => handleOpenEditForm(v.id)} >Editar</Button>
               </div>)}
             />
 
@@ -132,131 +198,141 @@ const Products = () => {
         </div>
       </div>
 
+      <Modal
+        title={"Formulario"}
+        visible={isModalOpen}
+        onOk={() => handleSaveForm()}
+        onCancel={() => handleCancelForm()}
+        confirmLoading={isSavingForm}
+      >
+        <Spin spinning={isModalLoading} tip={"Cargando..."}>
 
+          <Form
+            form={form}
+            name="basic"
+          >
 
-      {/* <Form
-              form={form}
-              {...layout}
-              name="basic"
-              onFinish={onFinish}
-              onFinishFailed={onFinishFailed}
+            <Form.Item
+              hidden
+              name="id"
             >
-              <Form.Item
-                label="nombre"
-                name="name"
-                rules={[{ required: true }]}
+              <Input />
+            </Form.Item>
 
-              >
-                <Input />
-              </Form.Item>
+            <Form.Item
+              label="nombre"
+              name="name"
+              rules={[{ required: true }]}
+              {...layout}
+            >
+              <Input />
+            </Form.Item>
 
-              <Form.Item
-                label="descripción"
-                name="description"
-                rules={[{ required: true }]}
+            <Form.Item
+              label="descripción"
+              name="description"
+              rules={[{ required: true }]}
+              {...layout}
+            >
+              <Input />
+            </Form.Item>
 
-              >
-                <Input />
-              </Form.Item>
+            <Form.Item
+              label="precio"
+              name="price"
+              rules={[{ required: true }]}
+              {...layout}
+            >
+              <Input type='number' />
+            </Form.Item>
 
-              <Form.Item
-                label="precio"
-                name="price"
-                rules={[{ required: true }]}
+            <Form.Item
+              label="categoria"
+              name="categoryId"
+              rules={[{ required: true }]}
+              {...layout}
+            >
+              <Select >
+                {categories?.map((value, index) =>
+                  <Option key={index} value={value.id}>{value.name}</Option>
+                )}
+              </Select>
+            </Form.Item>
 
-              >
-                <Input type='number' />
-              </Form.Item>
+            <Form.Item
+              label="proveedor"
+              name="providerId"
+              rules={[{ required: true }]}
+              {...layout}
+            >
+              <Select >
+                {providers?.map((value, index) =>
+                  <Option key={index} value={value.id}>{value.name}</Option>
+                )}
+              </Select>
+            </Form.Item>
 
-              <Form.Item
-                label="categoria"
-                name="categoryId"
-                rules={[{ required: true }]}
+            <Form.Item
+              label="sku"
+              name="sku"
+              rules={[{ required: true }]}
+              {...layout}
+            >
+              <Input />
+            </Form.Item>
 
-              >
-                <Select >
-                  {categories?.map((value, index) =>
-                    <Option key={index} value={value.id}>{value.name}</Option>
-                  )}
-                </Select>
-              </Form.Item>
+            <Form.Item
+              label="color"
+              name="color"
+              rules={[{ required: true }]}
+              {...layout}
+            >
+              <Input />
+            </Form.Item>
 
-              <Form.Item
-                label="proveedor"
-                name="providerId"
-                rules={[{ required: true }]}
+            <Form.Item
+              label="tamaño"
+              name="size"
+              rules={[{ required: true }]}
+              {...layout}
+            >
+              <Input />
+            </Form.Item>
 
-              >
-                <Select >
-                  {providers?.map((value, index) =>
-                    <Option key={index} value={value.id}>{value.name}</Option>
-                  )}
-                </Select>
-              </Form.Item>
+            <Form.Item
+              label="peso"
+              name="weight"
+              rules={[{ required: true }]}
+              {...layout}
+            >
+              <Input />
+            </Form.Item>
 
-              <Form.Item
-                label="sku"
-                name="sku"
-                rules={[{ required: true }]}
+            <Form.Item
+              label="presición"
+              name="precision"
+              rules={[{ required: true }]}
+              {...layout}
+            >
+              <Input />
+            </Form.Item>
 
-              >
-                <Input />
-              </Form.Item>
+            <Form.Item
+              label="marca"
+              name="brand"
+              rules={[{ required: true }]}
+              {...layout}
+            >
+              <Input />
+            </Form.Item>
+          </Form>
 
-              <Form.Item
-                label="color"
-                name="color"
-                rules={[{ required: true }]}
+        </Spin>
 
-              >
-                <Input />
-              </Form.Item>
-
-              <Form.Item
-                label="tamaño"
-                name="size"
-                rules={[{ required: true }]}
-
-              >
-                <Input />
-              </Form.Item>
-
-              <Form.Item
-                label="peso"
-                name="weight"
-                rules={[{ required: true }]}
-
-              >
-                <Input />
-              </Form.Item>
-
-              <Form.Item
-                label="presición"
-                name="precision"
-                rules={[{ required: true }]}
-              >
-                <Input />
-              </Form.Item>
-
-              <Form.Item
-                label="marca"
-                name="brand"
-                rules={[{ required: true }]}
-
-              >
-                <Input />
-              </Form.Item>
-
-              <Form.Item >
-                <Button type="primary" htmlType="submit">
-                  Agregar producto
-        </Button>
-              </Form.Item>
-            </Form> */}
-
+      </Modal>
 
 
     </main>
   )
 }
-export default Products;
+export default MainEntity;

@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { Form, Input, Button, notification } from 'antd';
 import { Store } from 'antd/lib/form/interface';
 import './LoginPage.scss'
-import { AuthLoginRequest } from '../../Interfaces/auth.interface';
-import { loginService } from '../../Services/auth.service';
+import { AuthLoginRequest } from '../../Entitites/Auth/interface';
+import { login } from '../../Entitites/Auth/repository';
 
 const Login = () => {
   const [isLogginIn, setIsLogginIn] = useState(false);
@@ -11,12 +11,13 @@ const Login = () => {
   const onFinish = async (values: Store) => {
     setIsLogginIn(true);
     let request: AuthLoginRequest = { username: values.username, password: values.password }
-    await loginService(request)
+    await login(request)
       .catch(e => {
+        console.log(e.message)
         setIsLogginIn(false);
         notification["error"]({
           message: 'Error',
-          description: e.message,
+          description: "No se puede ingresar con estas credenciales, contacte al administrador",
         });
       })
   };

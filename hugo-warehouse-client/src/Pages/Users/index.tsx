@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react'
-import { Table, notification, Button, Popconfirm, Modal, Card, Form, Input, Select, Spin } from 'antd';
-import { User } from '../../Interfaces/users.interface';
-import { getAll as getAllUsers, remove } from '../../Entitites/User/repository'
+import { Table, notification, Button, Popconfirm, Modal, Form, Input, Select, Spin } from 'antd';
+import { User } from '../../Entitites/User/interface';
+import { add, getAll as getAllUsers, remove, update, getById, getAll } from '../../Entitites/User/repository'
 import { useForm } from 'antd/lib/form/Form';
 import { getAll as getAllRoles } from '../../Entitites/Role/repository';
 import { Role } from '../../Entitites/Role/interface';
+import moment from 'moment';
 
 const { Column } = Table;
 const { Option } = Select;
@@ -23,6 +24,7 @@ const MainEntity = () => {
 
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [isModalLoading, setIsModalLoading] = useState<boolean>(false);
+  const [isSavingForm, setIsSavingForm] = useState<boolean>(false);
 
   async function fetchAll() {
     try {
@@ -42,23 +44,24 @@ const MainEntity = () => {
   }, [])
 
   async function confirm(v: number) {
-    setLoading(true)
+    setLoading(true);
 
-    await remove(v)
-      .then(x => {
-        notification["success"]({
-          message: '¡Perfecto!',
-          description:
-            'La entidad se borró con éxito',
-        });
-      })
-      .catch(() => {
-        notification["error"]({
-          message: "Error",
-          description:
-            'La entidad no se puede borrar, contacte al administrador.',
-        });
-      })
+    try {
+      await remove(v);
+      await getAll().then((result) => setUsers(result));
+
+      notification["success"]({
+        message: '¡Perfecto!',
+        description:
+          'La entidad se borró con éxito',
+      });
+    } catch (error) {
+      notification["error"]({
+        message: "Error",
+        description:
+          'La entidad no se puede borrar, contacte al administrador.',
+      });
+    }
 
     setLoading(false)
   }
@@ -72,14 +75,59 @@ const MainEntity = () => {
     setIsModalLoading(false);
   }
 
-  async function handleOpenEditForm() {
+  async function handleOpenEditForm(id: number) {
     setIsModalOpen(true);
     setIsModalLoading(true);
+    try {
+      const entityToEdit = await getById(id);
+      getAllRoles().then((roles) => setRoles(roles));
+
+      form.setFieldsValue(entityToEdit);
+      setIsModalLoading(false);
+
+    } catch (error) {
+      notification["error"]({
+        message: "Error",
+        description:
+          'Hay un error al actualizar o al actualizar.',
+      });
+      setIsModalLoading(false);
+    }
   }
 
   async function handleSaveForm() {
+    await form.validateFields();
 
+    try {
+      setIsSavingForm(true)
 
+      const userForm = form.getFieldsValue() as User;
+
+      userForm.createdOn = moment().toDate();
+
+      if (userForm.id === undefined) {
+        await add(userForm);
+      }
+      else await update(userForm.id, userForm);
+
+      await fetchAll();
+
+      setIsSavingForm(false);
+      setIsModalOpen(false);
+    } catch (error) {
+      notification["error"]({
+        message: "Error",
+        description:
+          'Hay un error al actualizar o al actualizar.',
+      });
+      setIsSavingForm(false);
+    }
+  }
+
+  async function handleCancelForm() {
+    setIsSavingForm(false);
+    setIsModalOpen(false);
+    form.resetFields();
   }
 
   return (
@@ -95,12 +143,12 @@ const MainEntity = () => {
       <div className="row">
         <div className="col-12">
           <Table dataSource={users} bordered size={"small"} loading={loading} className="mt-3" rowKey="id">
-            <Column
+            <Column<User>
               title='#'
               key='id'
               render={(v) => (<div className="d-flex flex-row">
                 <Popconfirm
-                  title="¿Estás seguro de borrar esta categoría?"
+                  title="La entidad solo se podrá borrar si no tiene dependientes."
                   onConfirm={() => confirm(v.id)}
                   okText="Si"
                   cancelText="No"
@@ -108,39 +156,37 @@ const MainEntity = () => {
                   <Button type="link" className="p-0 m-1">Borrar</Button>
 
                 </Popconfirm>
-                <Button type="link" className="p-0 m-1" onClick={() => handleOpenEditForm()}>Editar</Button>
+                <Button type="link" className="p-0 m-1" onClick={() => handleOpenEditForm(v.id)} >Editar</Button>
               </div>)}
             />
 
             <Column<User>
               title='ID'
               dataIndex='id'
-              key='id'
             />
             <Column<User>
               title='Usuario'
               dataIndex='userName'
-              key='userName'
             />
             <Column<User>
               title='Nombre'
               dataIndex='name'
-              key='name'
             />
             <Column<User>
               title='Edad'
               dataIndex='age'
-              key='age'
             />
             <Column<User>
               title='Email'
               dataIndex='email'
-              key='email'
+            />
+            <Column<User>
+              title='Rol'
+              dataIndex={['role', 'name']}
             />
             <Column<User>
               title='Fecha de Registro'
               dataIndex='createdOn'
-              key='createdOn'
             />
           </Table>
         </div>
@@ -150,6 +196,8 @@ const MainEntity = () => {
         title={"Formulario"}
         visible={isModalOpen}
         onOk={() => handleSaveForm()}
+        onCancel={() => handleCancelForm()}
+        confirmLoading={isSavingForm}
       >
         <Spin spinning={isModalLoading} tip={"Cargando..."}>
           <Form
