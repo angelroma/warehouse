@@ -5,5 +5,6 @@ export interface Category {
     name: string;
     description: string;
     createdOn: Date;
+    active?: boolean
     product: Product[];
 }

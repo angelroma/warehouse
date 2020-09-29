@@ -8,6 +8,9 @@ import moment from 'moment';
 import { Category } from '../../Entitites/Category/interface';
 import { Product } from '../../Entitites/Product/interface';
 import { Provider } from '../../Entitites/Provider/interface';
+import { useSelector } from 'react-redux';
+import { AuthState } from '../../Entitites/Auth/interface';
+import { RootState } from '../../Store';
 
 const { Column } = Table;
 const { Option } = Select;
@@ -17,8 +20,11 @@ const layout = {
   wrapperCol: { span: 15 }
 }
 
+const allowedRoles = ["admin", "developer"]
+
 const MainEntity = () => {
   const [form] = useForm();
+  const { user } = useSelector<RootState, AuthState>(state => state.auth_reducer);
 
   const [categories, setCategories] = useState<Category[]>();
   const [providers, setProviders] = useState<Provider[]>();
@@ -139,6 +145,8 @@ const MainEntity = () => {
     form.resetFields();
   }
 
+  if (user === null) return (<div>Cargando...</div>)
+
   return (
     <main>
       <div className="row justify-content-end">
@@ -152,23 +160,24 @@ const MainEntity = () => {
       <div className="row">
         <div className="col-12">
           <Table dataSource={product} bordered size={"small"} loading={loading} className="mt-3" rowKey="id">
-            <Column<Product>
-              title='#'
-              key='id'
-              render={(v) => (<div className="d-flex flex-row">
-                <Popconfirm
-                  title="La entidad solo se podrá borrar si no tiene dependientes."
-                  onConfirm={() => confirm(v.id)}
-                  okText="Si"
-                  cancelText="No"
-                >
-                  <Button type="link" className="p-0 m-1">Borrar</Button>
-
-                </Popconfirm>
-                <Button type="link" className="p-0 m-1" onClick={() => handleOpenEditForm(v.id)} >Editar</Button>
-              </div>)}
-            />
-
+            {allowedRoles.includes(user.role) ?
+              <Column<Product>
+                title='#'
+                key='id'
+                render={(v) => (<div className="d-flex flex-row">
+                  <Popconfirm
+                    title="La entidad solo se podrá borrar si no tiene dependientes."
+                    onConfirm={() => confirm(v.id)}
+                    okText="Si"
+                    cancelText="No"
+                  >
+                    <Button type="link" className="p-0 m-1">Borrar</Button>
+                  </Popconfirm>
+                  <Button type="link" className="p-0 m-1" onClick={() => handleOpenEditForm(v.id)} >Editar</Button>
+                </div>)}
+              />
+              : null}
+              
             <Column<Product>
               title='ID'
               dataIndex='id'

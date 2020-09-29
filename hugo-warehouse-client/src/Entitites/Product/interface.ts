@@ -15,9 +15,10 @@ export interface Product {
     weight: number;
     precision: number;
     brand: string;
-    currentTotal:number;
+    currentTotal: number;
     createdOn: Date;
     category?: Category;
     provider?: Provider;
+    active?: boolean;
     operation: Operation[];
 }

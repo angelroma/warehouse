@@ -3,8 +3,8 @@ import { Operation } from "./interface";
 
 const path = '/operations'
 
-export const getAll = async () => {
-    return (await api.get(`${path}`)).data as Operation[]
+export const getAllByDateRange = async (dateRange: any) => {
+    return (await api.post(`${path}/GetAllByDateRange`, dateRange)).data as Operation[]
 }
 
 export const getById = async (id: number) => {

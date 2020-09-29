@@ -1,4 +1,4 @@
-import { Button, Card, Form, Input, InputNumber, List, notification, Select, Statistic, Table } from "antd";
+import { Button, Card, Form, Input, InputNumber, notification, Select, Statistic, Table } from "antd";
 import { useForm } from "antd/lib/form/Form";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
@@ -6,16 +6,19 @@ import { AuthState } from "../../Entitites/Auth/interface";
 import { Operation } from "../../Entitites/Operation/interface";
 import { OperationType } from "../../Entitites/OperationType/interface";
 import { RootState } from "../../Store";
-import { getAll, add } from "../../Entitites/Operation/repository";
+import { getAllByDateRange, add } from "../../Entitites/Operation/repository";
 import { getAll as getAllOperationTypes } from "../../Entitites/OperationType/repository";
 import { getAll as getAllProducts } from "../../Entitites/Product/respository";
 import { Product } from "../../Entitites/Product/interface";
 import Column from "antd/lib/table/Column";
 import moment from "moment";
 import 'moment/locale/es-mx';
+import { DateRangePicker } from "rsuite";
+import { ValueType } from "rsuite/lib/DateRangePicker";
+import { CSVLink } from "react-csv";
+import { Data } from "react-csv/components/CommonPropTypes";
 
 const { Option } = Select;
-
 
 const Entry = () => {
     const { user } = useSelector<RootState, AuthState>(state => state.auth_reducer);
@@ -25,10 +28,20 @@ const Entry = () => {
     const [, forceUpdate] = useState<any>();
     const [form] = useForm();
     const [saving, setSaving] = useState<boolean>(false);
+    const [rangePicker, setRangePicker] = useState<ValueType>([moment().subtract(5, 'd').toDate(), moment().toDate()])
+
+    async function firstFetchOperations() {
+        const dateRanges = {
+            startDate: rangePicker[0],
+            endDate: rangePicker[1]
+        }
+
+        await getAllByDateRange(dateRanges).then((operations) => setOperations(operations));
+    }
 
     async function fetchAll() {
         try {
-            await getAll().then((operations) => setOperations(operations));
+            await firstFetchOperations()
             await getAllOperationTypes().then((result) => setOperationTypes(result));
             await getAllProducts().then((result) => setProducts(result));
         } catch (error) {
@@ -70,7 +83,14 @@ const Entry = () => {
 
     useEffect(() => {
         fetchAll();
-    }, [])
+    }, []);
+
+
+    useEffect(() => {
+        firstFetchOperations();
+    }, [rangePicker])
+
+    if (products === undefined) return (<div>Cargando...</div>)
 
     return (
         <main>
@@ -138,7 +158,46 @@ const Entry = () => {
                 </div>
 
                 <div className="col-8">
-                    <Card type="inner" title="Operaciones recientes:">
+                    <Card type="inner" title="Operaciones recientes:"
+                        extra={
+                            <div className={"d-flex align-items-center"}>
+                                <DateRangePicker
+                                    cleanable={false}
+                                    placeholder="Rango de fecha"
+                                    format="YYYY-MM-DD"
+                                    placement="leftStart"
+                                    value={rangePicker}
+                                    onChange={(v) => setRangePicker(v)}
+                                    locale={{
+                                        sunday: 'D',
+                                        monday: 'L',
+                                        tuesday: 'M',
+                                        wednesday: 'MI',
+                                        thursday: 'J',
+                                        friday: 'V',
+                                        saturday: 'S',
+                                        ok: 'OK',
+                                        today: 'Hoy',
+                                        yesterday: 'Ayer',
+                                        last7Days: 'Últimos 7 días'
+                                    }}
+                                />
+
+                                <Button className="ml-3">
+                                    <CSVLink
+                                        filename={`reporte_${Date.now()}.csv`}
+                                        data={operations as Data}
+                                        headers={
+                                            [
+                                                { label: "Producto id", key: "productId" },
+                                                { label: "Proceso", key: "description" },
+                                                { label: "Cantidad Absoluta", key: "queantity" },
+                                                { label: "Fecha", key: "createdOn" }
+                                            ]
+                                        }>Generar Reporte</CSVLink>
+                                </Button>
+                            </div>}
+                    >
                         <Table
                             loading={operations === undefined}
                             pagination={{ pageSize: 5, showSizeChanger: false }}
@@ -163,7 +222,7 @@ const Entry = () => {
                 })}
 
             </section>
-        </main>
+        </main >
     )
 }
 
