@@ -6,6 +6,9 @@ import { useForm } from 'antd/lib/form/Form';
 import { getAll as getAllRoles } from '../../Entitites/Role/repository';
 import { Role } from '../../Entitites/Role/interface';
 import moment from 'moment';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../Store';
+import { AuthState } from '../../Entitites/Auth/interface';
 
 const { Column } = Table;
 const { Option } = Select;
@@ -16,6 +19,8 @@ const layout = {
 }
 
 const MainEntity = () => {
+  const { user } = useSelector<RootState, AuthState>(state => state.auth_reducer);
+
   const [form] = useForm();
 
   const [roles, setRoles] = useState<Role[]>();
@@ -47,6 +52,10 @@ const MainEntity = () => {
     setLoading(true);
 
     try {
+
+      if (user === null) throw new Error("Existe un error con tu cuenta, por favor contacta al administrador o intenta cerrar y iniciar sesión.");
+      if (v === Number(user.id)) throw new Error("No puedes borrar tu propia cuenta.");
+
       await remove(v);
       await getAll().then((result) => setUsers(result));
 
@@ -147,15 +156,14 @@ const MainEntity = () => {
               title='#'
               key='id'
               render={(v) => (<div className="d-flex flex-row">
-                <Popconfirm
+                {v.id !== Number(user?.id) ? <Popconfirm
                   title="La entidad solo se podrá borrar si no tiene dependientes."
                   onConfirm={() => confirm(v.id)}
                   okText="Si"
                   cancelText="No"
                 >
-                  <Button type="link" className="p-0 m-1">Borrar</Button>
-
-                </Popconfirm>
+                  <Button type="link" className={"p-0 m-1"}>Borrar</Button>
+                </Popconfirm> : null}
                 <Button type="link" className="p-0 m-1" onClick={() => handleOpenEditForm(v.id)} >Editar</Button>
               </div>)}
             />
@@ -273,6 +281,7 @@ const MainEntity = () => {
             <Form.Item
               label="Role"
               name="roleId"
+
               rules={[{ required: true, message: 'Valor requerido' }]}
               {...layout}
 
