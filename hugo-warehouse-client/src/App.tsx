@@ -18,6 +18,7 @@ import Providers from './Pages/Providers';
 import Operations from './Pages/Operations';
 import Users from './Pages/Users'
 import { AuthState } from './Entitites/Auth/interface';
+import { BorderBottomOutlined } from '@ant-design/icons';
 
 const homePath = "/";
 const operationsPath = "/operaciones";
@@ -36,7 +37,11 @@ const App = () => {
     loginByToken();
   }, [])
 
-  if (isAuthenticated === false || user === null)
+  if (user === null || isAuthenticated === null) return (
+    <div>Cargando...</div>
+  )
+
+  if (isAuthenticated === false)
     return (
       <Switch>
         <Route path="*" >
@@ -50,12 +55,12 @@ const App = () => {
       <section className="row">
         <div className="col-12">
           <Menu theme="dark" mode="horizontal" selectedKeys={[location.pathname]}>
-            <Menu.Item key={homePath}><Link to={homePath} />Inicio</Menu.Item>
-            <Menu.Item key={operationsPath}><Link to={operationsPath} />Entrada y Salida</Menu.Item>
+            <Menu.Item key={homePath} icon={<BorderBottomOutlined />} style={{ backgroundColor:"rgb(18, 99, 73)", color: "#FFF", fontWeight: "bold" }}><Link to={homePath} />Hugos Connect</Menu.Item>
+            <Menu.Item key={operationsPath}><Link to={operationsPath} />Entrada y Salida (Operación)</Menu.Item>
 
             {allowedRoles.includes(user.role) ? <Menu.Item key={categoriesPath}><Link to={categoriesPath} />Categorias</Menu.Item> : null}
             {allowedRoles.includes(user.role) ? <Menu.Item key={providersPath}><Link to={providersPath} />Proveedores </Menu.Item> : null}
-            {allowedRoles.includes(user.role) ? <Menu.Item key={productsPath}><Link to={productsPath} />Productos</Menu.Item> : null}
+            {allowedRoles.includes(user.role) ? <Menu.Item key={productsPath}><Link to={productsPath} />Tipos de Producto</Menu.Item> : null}
             {allowedRoles.includes(user.role) ? <Menu.Item key={usersPath}><Link to={usersPath} />Usuarios</Menu.Item> : null}
 
             <Menu.Item key="8" style={{ float: 'right' }} onClick={() => {

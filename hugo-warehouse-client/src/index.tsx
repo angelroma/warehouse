@@ -5,10 +5,10 @@ import * as serviceWorker from './serviceWorker';
 import { HashRouter as Router } from 'react-router-dom';
 import { Provider } from 'react-redux'
 import store from './Store/index'
-import './theme.scss'
 import { ConfigProvider } from 'antd';
 import esEs from 'antd/es/locale/es_ES';
-
+import './theme.scss'
+import './theme.less'
 ReactDOM.render(
   <ConfigProvider locale={esEs}>
     <Router>

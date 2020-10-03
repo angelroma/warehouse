@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Table, notification, Button, Popconfirm, Modal, Form, Input, Select, Spin } from 'antd';
+import { Table, notification, Button, Popconfirm, Modal, Form, Input, Select, Spin, InputNumber } from 'antd';
 import { User } from '../../Entitites/User/interface';
 import { add, getAll as getAllUsers, remove, update, getById, getAll } from '../../Entitites/User/repository'
 import { useForm } from 'antd/lib/form/Form';
@@ -9,6 +9,7 @@ import moment from 'moment';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../Store';
 import { AuthState } from '../../Entitites/Auth/interface';
+import { LoadingOutlined } from '@ant-design/icons';
 
 const { Column } = Table;
 const { Option } = Select;
@@ -151,13 +152,21 @@ const MainEntity = () => {
       </div>
       <div className="row">
         <div className="col-12">
-          <Table dataSource={users} bordered size={"small"} loading={loading} className="mt-3" rowKey="id">
+          <Table
+            dataSource={users}
+            bordered
+            size={"small"}
+            loading={loading}
+            className="mt-3"
+            rowKey="id"
+            scroll={{ x: "100vh" }}
+          >
             <Column<User>
               title='#'
               key='id'
               render={(v) => (<div className="d-flex flex-row">
                 {v.id !== Number(user?.id) ? <Popconfirm
-                  title="La entidad solo se podrá borrar si no tiene dependientes."
+                  title="¿Está securo de eliminar este registro?"
                   onConfirm={() => confirm(v.id)}
                   okText="Si"
                   cancelText="No"
@@ -207,13 +216,13 @@ const MainEntity = () => {
         onCancel={() => handleCancelForm()}
         confirmLoading={isSavingForm}
       >
-        <Spin spinning={isModalLoading} tip={"Cargando..."}>
+        <Spin spinning={isModalLoading} tip={"Cargando..."} indicator={<LoadingOutlined style={{ fontSize: 24 }} spin />} >
           <Form
             form={form}
             name="basic"
           >
             <Form.Item
-              hidden
+              className="d-none"
               name="id"
             >
               <Input />
@@ -222,7 +231,12 @@ const MainEntity = () => {
             <Form.Item
               label="Usuario"
               name="userName"
-              rules={[{ required: true, message: 'Valor requerido' }]}
+              rules={[
+                { required: true, message: 'Valor requerido.' },
+                { min: 5, message: 'Se require como mínimo 5 caracteres.' },
+                { max: 10, message: 'Se require como máximo 10 caracteres.' },
+                { pattern: /^[a-z0-9]+$/i, message: 'Solo se permiten números y letras.' }
+              ]}
               {...layout}
             >
               <Input
@@ -233,7 +247,11 @@ const MainEntity = () => {
             <Form.Item
               label="Contraseña"
               name="password"
-              rules={[{ required: true, message: 'Valor requerido' }]}
+              rules={[
+                { required: true, message: 'Valor requerido' },
+                { min: 5, message: 'Se require como mínimo 5 caracteres.' },
+                { max: 15, message: 'Se require como máximo 15 caracteres.' },
+              ]}
               {...layout}
 
             >
@@ -245,7 +263,10 @@ const MainEntity = () => {
             <Form.Item
               label="Nombre"
               name="name"
-              rules={[{ required: true, message: 'Valor requerido' }]}
+              rules={[
+                { required: true, message: 'Valor requerido' },
+                { pattern: /^[a-zA-Z\s]*$/, message: 'Solo se permiten letras y espacios.' }
+              ]}
               {...layout}
 
             >
@@ -257,19 +278,36 @@ const MainEntity = () => {
             <Form.Item
               label="Edad"
               name="age"
-              rules={[{ required: true, message: 'Valor requerido' }]}
+              rules={[
+                { required: true, message: 'Valor requerido' },
+                { type: 'number', message: 'La edad debe de ser un número.' },
+                {
+                  validator(_rule, value) {
+                    console.log(value)
+                    if (value >= 18 && value <= 85) {
+                      return Promise.resolve();
+                    }
+                    return Promise.reject('La edad permitida es de 18 a 85 años');
+                  },
+                }]}
               {...layout}
 
             >
-              <Input
-                placeholder="Escribe tu edad"
-                type="number" />
+              <InputNumber
+                placeholder="Edad"
+                min={18}
+                max={85}
+                width={300}
+              />
             </Form.Item>
 
             <Form.Item
               label="Email"
               name="email"
-              rules={[{ required: true, message: 'Valor requerido' }]}
+              rules={[
+                { required: true, message: 'Valor requerido' },
+                { type: "email", message: 'Ingresa un email válido' }
+              ]}
               {...layout}
 
             >
@@ -279,15 +317,14 @@ const MainEntity = () => {
             </Form.Item>
 
             <Form.Item
-              label="Role"
+              label="Rol"
               name="roleId"
-
               rules={[{ required: true, message: 'Valor requerido' }]}
               {...layout}
 
             >
               <Select
-                placeholder="Selecciona un role"
+                placeholder="Selecciona un rol"
               >
                 {roles?.map(x =>
                   <Option key={x.id} value={x.id}>{x.name}</Option>

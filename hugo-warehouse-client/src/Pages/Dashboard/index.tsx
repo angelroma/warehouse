@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Statistic, Card, Calendar, notification } from 'antd';
-import { DotChartOutlined, UsergroupAddOutlined, BorderBottomOutlined } from "@ant-design/icons";
+import { DotChartOutlined, UsergroupAddOutlined, BorderBottomOutlined, ShrinkOutlined } from "@ant-design/icons";
 import moment from 'moment'
 import "./Dashboard.Style.scss"
 import { Product } from '../../Entitites/Product/interface';
@@ -47,7 +47,7 @@ const Dashboard = () => {
     <main className=" mb-5">
       <section className="row">
         <div className="col-12">
-          <Card type="inner" title="Calendario" >
+          <Card title="Calendario" >
             <Calendar fullscreen={false} className="calendar-dashboard" onSelect={() => { return }} />
           </Card>
         </div>
@@ -56,7 +56,7 @@ const Dashboard = () => {
       <section className="row mt-3">
 
         <div className="col-6">
-          <Card title="Productos Disponibles" bordered={false} loading={products === undefined}>
+          <Card title="Productos (Tipos) Disponibles" bordered={false} loading={products === undefined}>
             <Statistic title="Total" value={products?.length} prefix={<DotChartOutlined />} />
           </Card>
         </div>
@@ -77,7 +77,7 @@ const Dashboard = () => {
 
         <div className="col-6">
           <Card title="Proveedores Disponibles" bordered={false} loading={providers === undefined}>
-            <Statistic title="Total" value={providers?.length} prefix={<BorderBottomOutlined />} />
+            <Statistic title="Total" value={providers?.length} prefix={ <ShrinkOutlined />} />
           </Card>
         </div>
       </section>

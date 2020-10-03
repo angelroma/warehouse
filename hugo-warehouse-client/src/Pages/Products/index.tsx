@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Table, notification, Button, Popconfirm, Modal, Form, Input, Select, Spin } from 'antd';
+import { Table, notification, Button, Popconfirm, Modal, Form, Input, Select, Spin, InputNumber } from 'antd';
 import { add, getAll as getAllProducts, remove, update, getById, getAll } from '../../Entitites/Product/respository'
 import { useForm } from 'antd/lib/form/Form';
 import { getAll as getAllCategories } from '../../Entitites/Category/repository';
@@ -11,6 +11,7 @@ import { Provider } from '../../Entitites/Provider/interface';
 import { useSelector } from 'react-redux';
 import { AuthState } from '../../Entitites/Auth/interface';
 import { RootState } from '../../Store';
+import { LoadingOutlined } from '@ant-design/icons';
 
 const { Column } = Table;
 const { Option } = Select;
@@ -37,7 +38,10 @@ const MainEntity = () => {
 
   async function fetchAll() {
     try {
-      await getAllProducts().then((users) => setProduct(users));
+      await getAllProducts().then((users) => {
+        console.log("Result => ", users);
+        setProduct(users);
+      });
     } catch (error) {
       notification["error"]({
         message: "Error",
@@ -159,14 +163,17 @@ const MainEntity = () => {
       </div>
       <div className="row">
         <div className="col-12">
-          <Table dataSource={product} bordered size={"small"} loading={loading} className="mt-3" rowKey="id">
+          <Table
+            dataSource={product}
+            bordered size={"small"}
+            loading={loading} className="mt-3"
+            rowKey="id">
             {allowedRoles.includes(user.role) ?
               <Column<Product>
                 title='#'
-                key='id'
                 render={(v) => (<div className="d-flex flex-row">
                   <Popconfirm
-                    title="La entidad solo se podrá borrar si no tiene dependientes."
+                    title="¿Está securo de eliminar este registro?"
                     onConfirm={() => confirm(v.id)}
                     okText="Si"
                     cancelText="No"
@@ -177,31 +184,33 @@ const MainEntity = () => {
                 </div>)}
               />
               : null}
-              
+
             <Column<Product>
               title='ID'
               dataIndex='id'
-              key='id'
             />
             <Column<Product>
               title='Nombre'
               dataIndex='name'
-              key='name'
+            />
+            <Column<Product>
+              title='Categoría'
+              dataIndex={['category', 'name']}
+              render={(value) => {
+                return <div>{value === null ? "No Asignado" : value}</div>
+              }}
             />
             <Column<Product>
               title='Precio'
               dataIndex='price'
-              key='price'
             />
             <Column<Product>
               title='Descripción'
               dataIndex='description'
-              key='description'
             />
             <Column<Product>
               title='Fecha de Registro'
               dataIndex='createdOn'
-              key='createdOn'
             />
           </Table>
         </div>
@@ -213,8 +222,9 @@ const MainEntity = () => {
         onOk={() => handleSaveForm()}
         onCancel={() => handleCancelForm()}
         confirmLoading={isSavingForm}
+        style={{ top: "10px" }}
       >
-        <Spin spinning={isModalLoading} tip={"Cargando..."}>
+        <Spin spinning={isModalLoading} tip={"Cargando..."} indicator={<LoadingOutlined style={{ fontSize: 24 }} spin />} >
 
           <Form
             form={form}
@@ -222,46 +232,69 @@ const MainEntity = () => {
           >
 
             <Form.Item
-              hidden
+              className="d-none"
               name="id"
             >
               <Input />
             </Form.Item>
 
             <Form.Item
-              label="nombre"
+              label="Nombre"
               name="name"
-              rules={[{ required: true }]}
+              rules={[
+                { required: true, message: 'Valor requerido.' },
+                { min: 5, message: 'Se require como mínimo 5 caracteres.' },
+                { pattern: /^[a-zA-Z0-9\s]*$/, message: 'Solo se permiten letras, números y espacios.' }
+              ]}
               {...layout}
             >
-              <Input />
+              <Input placeholder={"Nombre"} />
             </Form.Item>
 
             <Form.Item
-              label="descripción"
+              label="Descripción"
               name="description"
-              rules={[{ required: true }]}
+              rules={[
+                { required: true, message: 'Valor requerido.' },
+                { min: 5, message: 'Se require como mínimo 5 caracteres.' },
+                { pattern: /^[a-zA-Z0-9\s]*$/, message: 'Solo se permiten letras, números y espacios.' }
+              ]}
               {...layout}
             >
-              <Input />
+              <Input placeholder={"Descripción"} />
             </Form.Item>
 
             <Form.Item
               label="precio"
               name="price"
-              rules={[{ required: true }]}
+              rules={[
+                { required: true, message: 'Valor requerido' },
+                { type: 'number', message: 'El precio debe de ser un número valido.' },
+                {
+                  validator(_rule, value) {
+                    console.log(value)
+                    if (value <= 50000) {
+                      return Promise.resolve();
+                    }
+                    return Promise.reject('El precio máximo permitido es de 50 mil MXN');
+                  },
+                }]}
               {...layout}
             >
-              <Input type='number' />
+              <InputNumber
+                placeholder="Precio"
+                max={50000}
+                width={300}
+              />
             </Form.Item>
 
             <Form.Item
-              label="categoria"
+              label="Categoría"
               name="categoryId"
               rules={[{ required: true }]}
               {...layout}
             >
-              <Select >
+              <Select placeholder="Categoría">
                 {categories?.map((value, index) =>
                   <Option key={index} value={value.id}>{value.name}</Option>
                 )}
@@ -269,12 +302,14 @@ const MainEntity = () => {
             </Form.Item>
 
             <Form.Item
-              label="proveedor"
+              label="Proveedor"
               name="providerId"
-              rules={[{ required: true }]}
+              rules={[
+                { required: true, message: 'Valor requerido.' },
+              ]}
               {...layout}
             >
-              <Select >
+              <Select placeholder="Proveedor">
                 {providers?.map((value, index) =>
                   <Option key={index} value={value.id}>{value.name}</Option>
                 )}
@@ -282,57 +317,102 @@ const MainEntity = () => {
             </Form.Item>
 
             <Form.Item
-              label="sku"
+              label="SKU"
               name="sku"
-              rules={[{ required: true }]}
+              rules={[
+                { required: true, message: 'Valor requerido.' },
+                { min: 5, message: 'Se require como mínimo 5 caracteres.' },
+                { max: 25, message: 'Se require como máximo 25 caracteres.' },
+                { pattern: /^[a-z0-9]+$/i, message: 'Solo se permiten números y letras.' }
+              ]}
               {...layout}
             >
-              <Input />
+              <Input placeholder="SKU" />
             </Form.Item>
 
             <Form.Item
-              label="color"
+              label="Color"
               name="color"
-              rules={[{ required: true }]}
+              rules={[
+                { required: true, message: 'Valor requerido.' },
+                { min: 4, message: 'Se require como mínimo 4 caracteres.' },
+                { pattern: /^[a-zA-Z\s]*$/, message: 'Solo se permiten letras y espacios.' }
+              ]}
               {...layout}
             >
-              <Input />
+              <Input placeholder="Color" />
             </Form.Item>
 
             <Form.Item
-              label="tamaño"
+              label="Tamaño"
               name="size"
-              rules={[{ required: true }]}
+              rules={[
+                { required: true, message: 'Valor requerido' },
+                { type: 'number', message: 'El precio debe de ser un número valido.' },
+                {
+                  validator(_rule, value) {
+                    console.log(value)
+                    if (value <= 120) {
+                      return Promise.resolve();
+                    }
+                    return Promise.reject('El tamño máximo permitido es de 120');
+                  },
+                }]}
               {...layout}
             >
-              <Input />
+              <InputNumber
+                placeholder="Tamaño"
+                max={50000}
+                width={300}
+              />
             </Form.Item>
 
             <Form.Item
-              label="peso"
+              label="Peso"
               name="weight"
-              rules={[{ required: true }]}
+              rules={[
+                { required: true, message: 'Valor requerido.' },
+                { type: 'number', message: 'Número no válido.' },
+                {
+                  validator(_rule, value) {
+                    console.log(value)
+                    if (value >= 1 && value <= 1500) {
+                      return Promise.resolve();
+                    }
+                    return Promise.reject('Rango de peso no permitido.');
+                  },
+                }]}
               {...layout}
             >
-              <Input />
+              <InputNumber
+                placeholder="KG"
+                width={300}
+              />
             </Form.Item>
 
             <Form.Item
-              label="presición"
+              label="Presición"
               name="precision"
-              rules={[{ required: true }]}
+              rules={[
+                { required: true, message: 'Valor requerido.' },
+                { min: 1, message: 'Se require como mínimo 1 caracteres.' },
+                { pattern: /^[a-zA-Z0-9\s]*$/, message: 'Solo se permiten letras, números y espacios.' }
+              ]}
               {...layout}
             >
-              <Input />
+              <Input placeholder="Presición" />
             </Form.Item>
 
             <Form.Item
               label="marca"
               name="brand"
-              rules={[{ required: true }]}
+              rules={[
+                { required: true, message: 'Valor requerido' },
+                { pattern: /^[a-zA-Z\s]*$/, message: 'Solo se permiten letras y espacios.' }
+              ]}
               {...layout}
             >
-              <Input />
+              <Input placeholder={"Marca"} />
             </Form.Item>
           </Form>
 

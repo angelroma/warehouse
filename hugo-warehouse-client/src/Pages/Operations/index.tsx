@@ -28,7 +28,7 @@ const Entry = () => {
     const [, forceUpdate] = useState<any>();
     const [form] = useForm();
     const [saving, setSaving] = useState<boolean>(false);
-    const [rangePicker, setRangePicker] = useState<ValueType>([moment().subtract(5, 'd').toDate(), moment().toDate()])
+    const [rangePicker, setRangePicker] = useState<ValueType>([moment().subtract(5, 'd').toDate(), moment().add(1, 'd').toDate()])
 
     async function firstFetchOperations() {
         const dateRanges = {
@@ -64,12 +64,9 @@ const Entry = () => {
 
         let type = operationTypes?.find(x => x.id === operationForm.operationTypeId)?.name
 
-        if (type === 'agregar') type = "agregó";
-        if (type?.trim() === 'aliminar') type = "eliminó";
-
         const productTtypeName = products?.find(x => x.id === operationForm.productId)?.name
 
-        operationForm.description = `El usuario ${user.unique_name} ${type} ${operationForm.quantity} ${operationForm.quantity === 1 ? "producto" : "productos"} de tipo [${productTtypeName}] el ${moment().format('YYYY-MM-DD HH:MM')}`
+        operationForm.description = `El usuario ${user.unique_name} ejecutó la acción [${type}] ${operationForm.quantity} ${operationForm.quantity === 1 ? "producto" : "productos"} de tipo [${productTtypeName}] el ${moment().format('YYYY-MM-DD HH:MM')}`
 
         await add(operationForm);
         await fetchAll();
@@ -100,7 +97,7 @@ const Entry = () => {
                     <Form form={form} layout="vertical" onFinish={onFinish}>
                         <Form.Item
                             name="id"
-                            hidden
+                            className="d-none"
                         >
                             <Input />
                         </Form.Item>
@@ -136,10 +133,21 @@ const Entry = () => {
                         <Form.Item
                             label={"Cantidad:"}
                             name="quantity"
-                            rules={[{ required: true, message: 'Valor requerido.' }]}
+                            rules={[
+                                { required: true, message: 'Valor requerido' },
+                                { type: 'number', message: 'Número inválido.' },
+                                {
+                                    validator(_rule, value) {
+                                        console.log(value)
+                                        if (value >= 1 && value <= 10) {
+                                            return Promise.resolve();
+                                        }
+                                        return Promise.reject('Solo se permite de 1 a 10 productos por operación');
+                                    },
+                                }]}
                             initialValue={1}
                         >
-                            <InputNumber min={1} />
+                            <InputNumber min={1} max={10} />
                         </Form.Item>
 
                         <Form.Item shouldUpdate={true}>
@@ -158,15 +166,17 @@ const Entry = () => {
                 </div>
 
                 <div className="col-8">
-                    <Card type="inner" title="Operaciones recientes:"
+                    <Card title="Operaciones recientes:"
                         extra={
                             <div className={"d-flex align-items-center"}>
                                 <DateRangePicker
+                                    showOneCalendar
                                     cleanable={false}
                                     placeholder="Rango de fecha"
                                     format="YYYY-MM-DD"
                                     placement="leftStart"
                                     value={rangePicker}
+                                    ranges={[]}
                                     onChange={(v) => setRangePicker(v)}
                                     locale={{
                                         sunday: 'D',
@@ -199,9 +209,14 @@ const Entry = () => {
                             </div>}
                     >
                         <Table
+                            showHeader={false}
                             loading={operations === undefined}
                             pagination={{ pageSize: 5, showSizeChanger: false }}
-                            dataSource={operations} size={"small"} rowKey="id">
+                            dataSource={operations}
+                            size={"small"}
+                            rowKey="id"
+
+                        >
                             <Column<Operation>
                                 dataIndex='description'
                                 key='description'
