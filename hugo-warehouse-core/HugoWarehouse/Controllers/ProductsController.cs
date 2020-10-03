@@ -10,7 +10,7 @@ using HugoWarehouse.Models.Poco;
 namespace HugoWarehouse.Controllers
 {
 
-   
+
 
     [Route("api/[controller]")]
     [ApiController]
@@ -25,7 +25,7 @@ namespace HugoWarehouse.Controllers
         public async Task<ActionResult<IEnumerable<Product>>> GetProduct()
         {
             return await _context.Product
-               
+               .Include(x => x.Category)
                 .ToListAsync();
         }
 
