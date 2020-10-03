@@ -3,41 +3,40 @@ import {
   Switch,
   Route,
   Link,
+  useLocation
 } from "react-router-dom";
 import { Menu } from 'antd';
 import { useSelector } from 'react-redux'
 import { RootState } from './Store'
-import { loginByStorageService } from './Services/auth.service';
+import { loginByToken, logout } from './Entitites/Auth/repository';
 
-//Login
-import Login from './Pages/Login/LoginPage'
-
-//Dashboard
-import Dashboard from './Pages/Dashboard'
-
-//Products
-import Products from './Pages/Products';
-import ProductAdd from './Pages/Products/ProductAdd';
-import ProductUpdate from './Pages/Products/Update';
-
-//Categories
-import Categories from './Pages/Categories'
-import CategoryAdd from './Pages/Categories/Add'
-import CategoryUpdate from './Pages/Categories/Update'
-
-//Users
+import Login from './Pages/Login/LoginPage';
+import Dashboard from './Pages/Dashboard';
+import Products from './Pages/Products/index';
+import Categories from './Pages/Categories';
+import Providers from './Pages/Providers';
+import Operations from './Pages/Operations';
 import Users from './Pages/Users'
+import { AuthState } from './Entitites/Auth/interface';
+
+const homePath = "/";
+const operationsPath = "/operaciones";
+const categoriesPath = "/categorias";
+const providersPath = "/proveedores";
+const productsPath = "/products";
+const usersPath = "/users";
+
+const allowedRoles = ["admin", "developer"]
 
 const App = () => {
-  const isAuthenticated = useSelector<RootState>(state => state.auth_reducer.isAuthenticated);
+  const { isAuthenticated, user } = useSelector<RootState, AuthState>(state => state.auth_reducer);
+  const location = useLocation();
 
   useEffect(() => {
-    loginByStorageService();
+    loginByToken();
   }, [])
 
-  // console.log("Store of auth", isAuthenticated);
-
-  if (isAuthenticated === false)
+  if (isAuthenticated === false || user === null)
     return (
       <Switch>
         <Route path="*" >
@@ -50,12 +49,18 @@ const App = () => {
 
       <section className="row">
         <div className="col-12">
-          <Menu theme="dark" mode="horizontal">
-            <Menu.Item key="1"><Link to="/" />Inicio</Menu.Item>
-            <Menu.Item key="6"><Link to="/registro" />Entrada y Salida</Menu.Item>
-            <Menu.Item key="4"><Link to="/categorias" />Categorias</Menu.Item>
-            <Menu.Item key="2"><Link to="/productos" />Productos</Menu.Item>
-            <Menu.Item key="3"><Link to="/usuarios" />Usuarios</Menu.Item>
+          <Menu theme="dark" mode="horizontal" selectedKeys={[location.pathname]}>
+            <Menu.Item key={homePath}><Link to={homePath} />Inicio</Menu.Item>
+            <Menu.Item key={operationsPath}><Link to={operationsPath} />Entrada y Salida</Menu.Item>
+
+            {allowedRoles.includes(user.role) ? <Menu.Item key={categoriesPath}><Link to={categoriesPath} />Categorias</Menu.Item> : null}
+            {allowedRoles.includes(user.role) ? <Menu.Item key={providersPath}><Link to={providersPath} />Proveedores </Menu.Item> : null}
+            {allowedRoles.includes(user.role) ? <Menu.Item key={productsPath}><Link to={productsPath} />Productos</Menu.Item> : null}
+            {allowedRoles.includes(user.role) ? <Menu.Item key={usersPath}><Link to={usersPath} />Usuarios</Menu.Item> : null}
+
+            <Menu.Item key="8" style={{ float: 'right' }} onClick={() => {
+              return logout()
+            }}> Cerrar Sesión</Menu.Item>
           </Menu>
         </div>
       </section>
@@ -64,34 +69,28 @@ const App = () => {
         <section className="row">
           <div className="col-12">
             <Switch>
-              <Route exact path="/">
+              <Route exact path={homePath}>
                 <Dashboard />
               </Route>
 
-              <Route exact path="/productos" >
-                <Products />
-              </Route>
-              <Route path={`/productos/agregar`}>
-                <ProductAdd />
-              </Route>
-              <Route path={`/productos/editar/:id`}>
-                <ProductUpdate />
-              </Route>
-
-              <Route path="/usuarios" >
+              <Route path={usersPath} >
                 <Users />
               </Route>
 
-              <Route exact path="/categorias">
+              <Route path={operationsPath} >
+                <Operations />
+              </Route>
+
+              <Route exact path={productsPath} >
+                <Products />
+              </Route>
+
+              <Route exact path={categoriesPath}>
                 <Categories />
               </Route>
 
-              <Route path={`/categorias/editar/:id`}>
-                <CategoryUpdate />
-              </Route>
-
-              <Route path={`/categorias/agregar`}>
-                <CategoryAdd />
+              <Route exact path={providersPath}>
+                <Providers />
               </Route>
 
               <Route path="*">

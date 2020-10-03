@@ -8,7 +8,7 @@ export interface Auth {
 }
 
 export interface AuthState {
-  auth: Auth | null,
+  user: Token | null,
   isAuthenticated: boolean | null
 }
 
@@ -35,4 +35,13 @@ export interface AuthLoginResponse {
   success: boolean;
   message: string;
   data: AuthLoginResponseData;
+}
+
+export interface Token {
+  id: string;
+  unique_name: string;
+  role: string;
+  nbf: number;
+  exp: number;
+  iat: number;
 }

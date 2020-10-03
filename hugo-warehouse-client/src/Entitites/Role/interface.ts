@@ -1,4 +1,4 @@
-import { User } from "../../Interfaces/users.interface";
+import { User } from "../../Entitites/User/interface";
 
 export interface Role {
     id: number;

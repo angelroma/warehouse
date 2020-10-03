@@ -1,9 +1,10 @@
 import { Product } from "../../Entitites/Product/interface";
 
-export interface Provider {
+export interface Category {
     id: number;
     name: string;
-    active?: boolean;
+    description: string;
     createdOn: Date;
+    active?: boolean
     product: Product[];
 }

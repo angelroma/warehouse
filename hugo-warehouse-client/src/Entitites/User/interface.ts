@@ -8,7 +8,8 @@ export interface User {
     email: string;
     password: string;
     userName: string;
-    roleId: number;
+    roleId?: number;
+    active?: boolean;
     createdOn: Date;
     role?: Role;
     operation: Operation[];

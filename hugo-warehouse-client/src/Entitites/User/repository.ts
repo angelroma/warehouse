@@ -1,4 +1,4 @@
-import { User } from "../../Interfaces/users.interface";
+import { User } from "../../Entitites/User/interface";
 import { api } from "../../Utils/api.util";
 
 const path = '/users'
