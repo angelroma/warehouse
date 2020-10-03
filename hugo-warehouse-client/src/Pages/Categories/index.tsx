@@ -4,6 +4,7 @@ import { add, getAll, remove, update, getById } from '../../Entitites/Category/r
 import { useForm } from 'antd/lib/form/Form';
 import moment from 'moment';
 import { Category } from '../../Entitites/Category/interface';
+import { LoadingOutlined } from '@ant-design/icons';
 
 const { Column } = Table;
 
@@ -139,13 +140,20 @@ const MainEntity = () => {
       </div>
       <div className="row">
         <div className="col-12">
-          <Table dataSource={categories} bordered size={"small"} loading={loading} className="mt-3" rowKey="id">
+          <Table
+            dataSource={categories}
+            bordered size={"small"}
+            loading={loading}
+            className="mt-3"
+            rowKey="id"
+            scroll={{ x: "100vh" }}
+          >
+
             <Column<Category>
               title='#'
-              key='id'
               render={(v) => (<div className="d-flex flex-row">
                 <Popconfirm
-                  title="La entidad solo se podrá borrar si no tiene dependientes."
+                  title="¿Está securo de eliminar este registro?"
                   onConfirm={() => confirm(v.id)}
                   okText="Si"
                   cancelText="No"
@@ -159,19 +167,15 @@ const MainEntity = () => {
             <Column<Category>
               title='Nombre'
               dataIndex='name'
-              key='name'
             />
             <Column<Category>
               title='Descripción'
               dataIndex='description'
-              key='description'
             />
             <Column<Category>
               title='Fecha de Registro'
               dataIndex='createdOn'
-              key='createdOn'
             />
-
           </Table>
         </div>
       </div>
@@ -183,7 +187,7 @@ const MainEntity = () => {
         onCancel={() => handleCancelForm()}
         confirmLoading={isSavingForm}
       >
-        <Spin spinning={isModalLoading} tip={"Cargando..."}>
+        <Spin spinning={isModalLoading} tip={"Cargando..."} indicator={<LoadingOutlined style={{ fontSize: 24 }} spin />} >
 
           <Form
             form={form}
@@ -191,25 +195,33 @@ const MainEntity = () => {
           >
 
             <Form.Item
-              hidden
+              className="d-none"
               name="id"
             >
               <Input />
             </Form.Item>
 
             <Form.Item
-              label="nombre"
+              label="Nombre"
               name="name"
-              rules={[{ required: true }]}
+              rules={[
+                { required: true, message: 'Valor requerido.' },
+                { min: 4, message: 'Se require como mínimo 4 caracteres.' },
+                { pattern: /^[a-zA-Z0-9\s]*$/, message: 'Solo se permiten letras, números y espacios.' }
+              ]}
               {...layout}
             >
               <Input />
             </Form.Item>
 
             <Form.Item
-              label="descripción"
+              label="Descripción"
               name="description"
-              rules={[{ required: true }]}
+              rules={[
+                { required: true, message: 'Valor requerido.' },
+                { min: 4, message: 'Se require como mínimo 4 caracteres.' },
+                { pattern: /^[a-zA-Z0-9\s]*$/, message: 'Solo se permiten letras, números y espacios.' }
+              ]}
               {...layout}
             >
               <Input />
