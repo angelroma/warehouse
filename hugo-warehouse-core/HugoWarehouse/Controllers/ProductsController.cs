@@ -9,22 +9,23 @@ using HugoWarehouse.Models.Poco;
 
 namespace HugoWarehouse.Controllers
 {
+
+   
+
     [Route("api/[controller]")]
     [ApiController]
     public class ProductsController : ControllerBase
     {
         private readonly HugosConnectContext _context;
 
-        public ProductsController(HugosConnectContext context)
-        {
-            _context = context;
-        }
+        public ProductsController(HugosConnectContext context) => _context = context;
 
         // GET: api/Products
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Product>>> GetProduct()
         {
             return await _context.Product
+               
                 .ToListAsync();
         }
 

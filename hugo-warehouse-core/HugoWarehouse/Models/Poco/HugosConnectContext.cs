@@ -36,6 +36,8 @@ namespace HugoWarehouse.Models.Poco
         {
             modelBuilder.Entity<Category>(entity =>
             {
+                entity.Property(e => e.Active).HasDefaultValueSql("((1))");
+
                 entity.Property(e => e.CreatedOn)
                     .HasColumnType("datetime")
                     .HasDefaultValueSql("(getdate())");
@@ -51,32 +53,31 @@ namespace HugoWarehouse.Models.Poco
 
             modelBuilder.Entity<Operation>(entity =>
             {
-                entity.Property(e => e.Id).ValueGeneratedOnAdd();
-
                 entity.Property(e => e.CreatedOn)
                     .HasColumnType("datetime")
                     .HasDefaultValueSql("(getdate())");
 
                 entity.Property(e => e.Description)
                     .IsRequired()
-                    .HasMaxLength(15);
+                    .HasMaxLength(250)
+                    .IsUnicode(false);
 
-                entity.HasOne(d => d.IdNavigation)
-                    .WithOne(p => p.Operation)
-                    .HasForeignKey<Operation>(d => d.Id)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Operation_Has_OperationType");
+                entity.HasOne(d => d.OperationType)
+                    .WithMany(p => p.Operation)
+                    .HasForeignKey(d => d.OperationTypeId)
+                    .OnDelete(DeleteBehavior.SetNull)
+                    .HasConstraintName("FK_Has_OperationType");
 
                 entity.HasOne(d => d.Product)
                     .WithMany(p => p.Operation)
                     .HasForeignKey(d => d.ProductId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .OnDelete(DeleteBehavior.SetNull)
                     .HasConstraintName("FK_Operation_Has_Product");
 
                 entity.HasOne(d => d.User)
                     .WithMany(p => p.Operation)
                     .HasForeignKey(d => d.UserId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .OnDelete(DeleteBehavior.SetNull)
                     .HasConstraintName("FK_Operation_Has_User");
             });
 
@@ -89,6 +90,8 @@ namespace HugoWarehouse.Models.Poco
 
             modelBuilder.Entity<Product>(entity =>
             {
+                entity.Property(e => e.Active).HasDefaultValueSql("((1))");
+
                 entity.Property(e => e.Brand)
                     .IsRequired()
                     .HasMaxLength(45)
@@ -119,17 +122,20 @@ namespace HugoWarehouse.Models.Poco
                 entity.HasOne(d => d.Category)
                     .WithMany(p => p.Product)
                     .HasForeignKey(d => d.CategoryId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .OnDelete(DeleteBehavior.SetNull)
                     .HasConstraintName("FK_Product_Has_Category");
 
                 entity.HasOne(d => d.Provider)
                     .WithMany(p => p.Product)
                     .HasForeignKey(d => d.ProviderId)
-                    .HasConstraintName("FK__Product__Provide__403A8C7D");
+                    .OnDelete(DeleteBehavior.SetNull)
+                    .HasConstraintName("FK__Product__Provide__06CD04F7");
             });
 
             modelBuilder.Entity<Provider>(entity =>
             {
+                entity.Property(e => e.Active).HasDefaultValueSql("((1))");
+
                 entity.Property(e => e.CreatedOn)
                     .HasColumnType("datetime")
                     .HasDefaultValueSql("(getdate())");
@@ -156,6 +162,8 @@ namespace HugoWarehouse.Models.Poco
 
             modelBuilder.Entity<User>(entity =>
             {
+                entity.Property(e => e.Active).HasDefaultValueSql("((1))");
+
                 entity.Property(e => e.CreatedOn)
                     .HasColumnType("datetime")
                     .HasDefaultValueSql("(getdate())");
@@ -179,7 +187,7 @@ namespace HugoWarehouse.Models.Poco
                 entity.HasOne(d => d.Role)
                     .WithMany(p => p.User)
                     .HasForeignKey(d => d.RoleId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .OnDelete(DeleteBehavior.SetNull)
                     .HasConstraintName("FK_User_Has_Role");
             });
 

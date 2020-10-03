@@ -12,7 +12,8 @@ namespace HugoWarehouse.Models.Poco
 
         public int Id { get; set; }
         public string Name { get; set; }
-        public DateTime? CreatedOn { get; set; }
+        public bool? Active { get; set; }
+        public DateTime CreatedOn { get; set; }
 
         public virtual ICollection<Product> Product { get; set; }
     }

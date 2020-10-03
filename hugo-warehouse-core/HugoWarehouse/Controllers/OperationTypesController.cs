@@ -11,48 +11,48 @@ namespace HugoWarehouse.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UsersController : ControllerBase
+    public class OperationTypesController : ControllerBase
     {
         private readonly HugosConnectContext _context;
 
-        public UsersController(HugosConnectContext context)
+        public OperationTypesController(HugosConnectContext context)
         {
             _context = context;
         }
 
-        // GET: api/Users
+        // GET: api/OperationTypes
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<User>>> GetUser()
+        public async Task<ActionResult<IEnumerable<OperationType>>> GetOperationType()
         {
-            return await _context.User.Include(x=>x.Role).ToListAsync();
+            return await _context.OperationType.ToListAsync();
         }
 
-        // GET: api/Users/5
+        // GET: api/OperationTypes/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<User>> GetUser(int id)
+        public async Task<ActionResult<OperationType>> GetOperationType(int id)
         {
-            var user = await _context.User.FindAsync(id);
+            var operationType = await _context.OperationType.FindAsync(id);
 
-            if (user == null)
+            if (operationType == null)
             {
                 return NotFound();
             }
 
-            return user;
+            return operationType;
         }
 
-        // PUT: api/Users/5
+        // PUT: api/OperationTypes/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutUser(int id, User user)
+        public async Task<IActionResult> PutOperationType(int id, OperationType operationType)
         {
-            if (id != user.Id)
+            if (id != operationType.Id)
             {
                 return BadRequest();
             }
 
-            _context.Entry(user).State = EntityState.Modified;
+            _context.Entry(operationType).State = EntityState.Modified;
 
             try
             {
@@ -60,7 +60,7 @@ namespace HugoWarehouse.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!UserExists(id))
+                if (!OperationTypeExists(id))
                 {
                     return NotFound();
                 }
@@ -73,37 +73,37 @@ namespace HugoWarehouse.Controllers
             return NoContent();
         }
 
-        // POST: api/Users
+        // POST: api/OperationTypes
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
-        public async Task<ActionResult<User>> PostUser(User user)
+        public async Task<ActionResult<OperationType>> PostOperationType(OperationType operationType)
         {
-            _context.User.Add(user);
+            _context.OperationType.Add(operationType);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetUser", new { id = user.Id }, user);
+            return CreatedAtAction("GetOperationType", new { id = operationType.Id }, operationType);
         }
 
-        // DELETE: api/Users/5
+        // DELETE: api/OperationTypes/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<User>> DeleteUser(int id)
+        public async Task<ActionResult<OperationType>> DeleteOperationType(int id)
         {
-            var user = await _context.User.FindAsync(id);
-            if (user == null)
+            var operationType = await _context.OperationType.FindAsync(id);
+            if (operationType == null)
             {
                 return NotFound();
             }
 
-            _context.User.Remove(user);
+            _context.OperationType.Remove(operationType);
             await _context.SaveChangesAsync();
 
-            return user;
+            return operationType;
         }
 
-        private bool UserExists(int id)
+        private bool OperationTypeExists(int id)
         {
-            return _context.User.Any(e => e.Id == id);
+            return _context.OperationType.Any(e => e.Id == id);
         }
     }
 }

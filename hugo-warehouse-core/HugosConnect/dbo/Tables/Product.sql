@@ -11,6 +11,8 @@
     [Weight] FLOAT NOT NULL DEFAULT 0.0,
     [Precision] float NOT NULL DEFAULT 0.0,
     [Brand] NVARCHAR(45) NOT NULL DEFAULT 'Unkown',
+    [CurrentTotal] INT NOT NULL DEFAULT 0,
+    [Active] BIT NOT NULL DEFAULT 1, 
     [CreatedOn]   DATETIME    CONSTRAINT [DF_Product_CreatedOn] DEFAULT (getdate()) NOT NULL,
     CONSTRAINT [PK_Product] PRIMARY KEY CLUSTERED ([Id] ASC),
     CONSTRAINT [FK_Product_Has_Category] FOREIGN KEY ([CategoryId]) REFERENCES [dbo].[Category] ([Id])

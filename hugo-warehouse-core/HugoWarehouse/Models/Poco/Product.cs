@@ -11,7 +11,7 @@ namespace HugoWarehouse.Models.Poco
         }
 
         public int Id { get; set; }
-        public int CategoryId { get; set; }
+        public int? CategoryId { get; set; }
         public int? ProviderId { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
@@ -22,6 +22,8 @@ namespace HugoWarehouse.Models.Poco
         public double Weight { get; set; }
         public double Precision { get; set; }
         public string Brand { get; set; }
+        public int CurrentTotal { get; set; }
+        public bool? Active { get; set; }
         public DateTime CreatedOn { get; set; }
 
         public virtual Category Category { get; set; }

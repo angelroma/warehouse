@@ -9,6 +9,12 @@ using HugoWarehouse.Models.Poco;
 
 namespace HugoWarehouse.Controllers
 {
+    public class DateRanges
+    {
+        public DateTime startDate { get; set; }
+        public DateTime endDate { get; set; }
+    }
+
     [Route("api/[controller]")]
     [ApiController]
     public class OperationsController : ControllerBase
@@ -21,10 +27,13 @@ namespace HugoWarehouse.Controllers
         }
 
         // GET: api/Operations
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Operation>>> GetOperation()
+        [HttpPost("GetAllByDateRange")]
+        public async Task<ActionResult<IEnumerable<Operation>>> GetOperation(DateRanges range)
         {
-            return await _context.Operation.ToListAsync();
+            return await _context.Operation
+                 .Where(x => x.CreatedOn >= range.startDate)
+                .Where(x => x.CreatedOn <= range.endDate)
+                .OrderByDescending(x => x.Id).ToListAsync();
         }
 
         // GET: api/Operations/5
@@ -79,7 +88,19 @@ namespace HugoWarehouse.Controllers
         [HttpPost]
         public async Task<ActionResult<Operation>> PostOperation(Operation operation)
         {
+            var productToUpdate = await _context.Product.FindAsync(operation.ProductId);
+
+            var operationTypes = await _context.OperationType.ToListAsync();
+
+            var add = operationTypes.FirstOrDefault(x => x.Name == "agregar");
+            var remove = operationTypes.FirstOrDefault(x => x.Name == "eliminar");
+
+            if (operation.OperationTypeId == add.Id) productToUpdate.CurrentTotal += operation.Quantity;
+            if (operation.OperationTypeId == remove.Id) productToUpdate.CurrentTotal -= operation.Quantity;
+
+            _context.Product.Update(productToUpdate);
             _context.Operation.Add(operation);
+
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetOperation", new { id = operation.Id }, operation);

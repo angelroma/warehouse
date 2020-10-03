@@ -21,14 +21,14 @@ namespace HugoWarehouse.Controllers
         }
 
         // GET: api/Categories
-        [HttpGet("GetAll")]
+        [HttpGet]
         public async Task<ActionResult<IEnumerable<Category>>> GetCategory()
         {
             return await _context.Category.ToListAsync();
         }
 
-        // GET: api/Categories/GetById/5
-        [HttpGet("GetById/{id}")]
+        // GET: api/Categories/5
+        [HttpGet("{id}")]
         public async Task<ActionResult<Category>> GetCategory(int id)
         {
             var category = await _context.Category.FindAsync(id);
@@ -44,7 +44,7 @@ namespace HugoWarehouse.Controllers
         // PUT: api/Categories/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
-        [HttpPut("Update/{id}")]
+        [HttpPut("{id}")]
         public async Task<IActionResult> PutCategory(int id, Category category)
         {
             if (id != category.Id)
@@ -76,7 +76,7 @@ namespace HugoWarehouse.Controllers
         // POST: api/Categories
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
-        [HttpPost("Add")]
+        [HttpPost]
         public async Task<ActionResult<Category>> PostCategory(Category category)
         {
             _context.Category.Add(category);
@@ -86,7 +86,7 @@ namespace HugoWarehouse.Controllers
         }
 
         // DELETE: api/Categories/5
-        [HttpDelete("DeleteById/{id}")]
+        [HttpDelete("{id}")]
         public async Task<ActionResult<Category>> DeleteCategory(int id)
         {
             var category = await _context.Category.FindAsync(id);
