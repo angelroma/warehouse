@@ -37,11 +37,7 @@ const App = () => {
     loginByToken();
   }, [])
 
-  if (user === null || isAuthenticated === null) return (
-    <div>Cargando...</div>
-  )
-
-  if (isAuthenticated === false)
+  if (isAuthenticated === false || user === null) 
     return (
       <Switch>
         <Route path="*" >

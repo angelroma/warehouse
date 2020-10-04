@@ -167,7 +167,10 @@ const MainEntity = () => {
             dataSource={product}
             bordered size={"small"}
             loading={loading} className="mt-3"
-            rowKey="id">
+            rowKey="id"
+            scroll={{ x: "100vh" }}
+
+          >
             {allowedRoles.includes(user.role) ?
               <Column<Product>
                 title='#'
