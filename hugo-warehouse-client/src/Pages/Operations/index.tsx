@@ -155,9 +155,9 @@ const Entry = () => {
                                 <Button
                                     type="primary"
                                     htmlType="submit"
-                                    loading={saving}
+
                                 >
-                                    Guardar
+                                    {saving ? "Guardando..." : "Guardar"}
                                 </Button>
                             )}
                         </Form.Item>

@@ -11,7 +11,6 @@ import { Provider } from '../../Entitites/Provider/interface';
 import { useSelector } from 'react-redux';
 import { AuthState } from '../../Entitites/Auth/interface';
 import { RootState } from '../../Store';
-import { LoadingOutlined } from '@ant-design/icons';
 
 const { Column } = Table;
 const { Option } = Select;
@@ -30,7 +29,6 @@ const MainEntity = () => {
   const [categories, setCategories] = useState<Category[]>();
   const [providers, setProviders] = useState<Provider[]>();
   const [product, setProduct] = useState<Product[]>();
-  const [loading, setLoading] = useState(false);
 
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [isModalLoading, setIsModalLoading] = useState<boolean>(false);
@@ -52,12 +50,10 @@ const MainEntity = () => {
   }
 
   useEffect(() => {
-    setLoading(true)
-    fetchAll().then(() => setLoading(false))
+    fetchAll()
   }, [])
 
   async function confirm(v: number) {
-    setLoading(true);
 
     try {
       await remove(v);
@@ -76,7 +72,6 @@ const MainEntity = () => {
       });
     }
 
-    setLoading(false)
   }
 
   async function handleOpenEmptyForm() {
@@ -149,7 +144,8 @@ const MainEntity = () => {
     form.resetFields();
   }
 
-  if (user === null) return (<div>Cargando...</div>)
+  if (product === undefined) return (<div>Cargando...</div>);
+  if (user === null) return (<div>Cargando...</div>);
 
   return (
     <main>
@@ -166,7 +162,7 @@ const MainEntity = () => {
           <Table
             dataSource={product}
             bordered size={"small"}
-            loading={loading} className="mt-3"
+            className="mt-3"
             rowKey="id"
             scroll={{ x: "100vh" }}
 
@@ -226,8 +222,12 @@ const MainEntity = () => {
         onCancel={() => handleCancelForm()}
         confirmLoading={isSavingForm}
         style={{ top: "10px" }}
+        okText={
+          <div>{isSavingForm ? "Guardando..." : "Guardar"}</div>
+        }
       >
-        <Spin spinning={isModalLoading} tip={"Cargando..."} indicator={<LoadingOutlined style={{ fontSize: 24 }} spin />} >
+        <Spin spinning={isModalLoading} tip={"Cargando..."} indicator={<div></div>} >
+
 
           <Form
             form={form}
