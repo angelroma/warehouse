@@ -63,6 +63,8 @@ const MainEntity = () => {
           'La entidad se borró con éxito',
       });
     } catch (error) {
+      console.error(error);
+
       notification["error"]({
         message: "Error",
         description:
@@ -92,6 +94,7 @@ const MainEntity = () => {
       setIsModalLoading(false);
 
     } catch (error) {
+
       notification["error"]({
         message: "Error",
         description:

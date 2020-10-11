@@ -110,6 +110,8 @@ const MainEntity = () => {
             setIsSavingForm(false);
             setIsModalOpen(false);
         } catch (error) {
+            console.error(error);
+
             notification["error"]({
                 message: "Error",
                 description:
