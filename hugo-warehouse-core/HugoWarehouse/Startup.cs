@@ -34,6 +34,15 @@ namespace HugoWarehouse
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors(o => o.AddPolicy("MyPolicy", builder =>
+            {
+                builder
+                 .AllowAnyMethod()
+                    .AllowCredentials()
+                    .SetIsOriginAllowed((host) => true)
+                    .AllowAnyHeader();
+        }));
+
             services.AddControllers();
             services.AddDbContext<HugosConnectContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnectionString")));
@@ -73,11 +82,9 @@ namespace HugoWarehouse
                 app.UseDeveloperExceptionPage();
             }
 
-            // Temporal Global Cors Available
-            app.UseCors(x => x
-                .AllowAnyOrigin()
-                .AllowAnyMethod()
-                .AllowAnyHeader());
+
+            app.UseCors("MyPolicy");
+
 
             app.UseHttpsRedirection();
 

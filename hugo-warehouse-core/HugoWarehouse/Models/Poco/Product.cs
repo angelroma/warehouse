@@ -20,7 +20,7 @@ namespace HugoWarehouse.Models.Poco
         public string Color { get; set; }
         public double Size { get; set; }
         public double Weight { get; set; }
-        public double Precision { get; set; }
+        public string Precision { get; set; }
         public string Brand { get; set; }
         public int CurrentTotal { get; set; }
         public bool? Active { get; set; }
