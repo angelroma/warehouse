@@ -13,7 +13,7 @@ export interface Product {
     color: string;
     size: number;
     weight: number;
-    precision: number;
+    precision: string;
     brand: string;
     currentTotal: number;
     createdOn: Date;

@@ -26,7 +26,6 @@ const MainEntity = () => {
 
   const [roles, setRoles] = useState<Role[]>();
   const [users, setUsers] = useState<User[]>();
-  const [loading, setLoading] = useState(false);
 
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [isModalLoading, setIsModalLoading] = useState<boolean>(false);
@@ -45,12 +44,10 @@ const MainEntity = () => {
   }
 
   useEffect(() => {
-    setLoading(true)
-    fetchAll().then(() => setLoading(false))
+    fetchAll()
   }, [])
 
   async function confirm(v: number) {
-    setLoading(true);
 
     try {
 
@@ -66,6 +63,8 @@ const MainEntity = () => {
           'La entidad se borró con éxito',
       });
     } catch (error) {
+      console.error(error);
+
       notification["error"]({
         message: "Error",
         description:
@@ -73,7 +72,6 @@ const MainEntity = () => {
       });
     }
 
-    setLoading(false)
   }
 
   async function handleOpenEmptyForm() {
@@ -96,6 +94,7 @@ const MainEntity = () => {
       setIsModalLoading(false);
 
     } catch (error) {
+
       notification["error"]({
         message: "Error",
         description:
@@ -140,6 +139,8 @@ const MainEntity = () => {
     form.resetFields();
   }
 
+  if (users === undefined) return (<div>Cargando...</div>);
+
   return (
     <main>
       <div className="row justify-content-end">
@@ -156,7 +157,6 @@ const MainEntity = () => {
             dataSource={users}
             bordered
             size={"small"}
-            loading={loading}
             className="mt-3"
             rowKey="id"
             scroll={{ x: "100vh" }}
@@ -214,9 +214,11 @@ const MainEntity = () => {
         visible={isModalOpen}
         onOk={() => handleSaveForm()}
         onCancel={() => handleCancelForm()}
-        confirmLoading={isSavingForm}
+        okText={
+          <div>{isSavingForm ? "Guardando..." : "Guardar"}</div>
+        }
       >
-        <Spin spinning={isModalLoading} tip={"Cargando..."} indicator={<LoadingOutlined style={{ fontSize: 24 }} spin />} >
+        <Spin spinning={isModalLoading} tip={"Cargando..."} indicator={<div></div>} >
           <Form
             form={form}
             name="basic"

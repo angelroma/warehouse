@@ -45,6 +45,7 @@ const Entry = () => {
             await getAllOperationTypes().then((result) => setOperationTypes(result));
             await getAllProducts().then((result) => setProducts(result));
         } catch (error) {
+            console.error(error);
             notification["error"]({
                 message: "Error",
                 description:
@@ -155,9 +156,9 @@ const Entry = () => {
                                 <Button
                                     type="primary"
                                     htmlType="submit"
-                                    loading={saving}
+
                                 >
-                                    Guardar
+                                    {saving ? "Guardando..." : "Guardar"}
                                 </Button>
                             )}
                         </Form.Item>

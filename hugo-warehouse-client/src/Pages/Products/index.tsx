@@ -11,7 +11,6 @@ import { Provider } from '../../Entitites/Provider/interface';
 import { useSelector } from 'react-redux';
 import { AuthState } from '../../Entitites/Auth/interface';
 import { RootState } from '../../Store';
-import { LoadingOutlined } from '@ant-design/icons';
 
 const { Column } = Table;
 const { Option } = Select;
@@ -30,7 +29,6 @@ const MainEntity = () => {
   const [categories, setCategories] = useState<Category[]>();
   const [providers, setProviders] = useState<Provider[]>();
   const [product, setProduct] = useState<Product[]>();
-  const [loading, setLoading] = useState(false);
 
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [isModalLoading, setIsModalLoading] = useState<boolean>(false);
@@ -52,12 +50,10 @@ const MainEntity = () => {
   }
 
   useEffect(() => {
-    setLoading(true)
-    fetchAll().then(() => setLoading(false))
+    fetchAll()
   }, [])
 
   async function confirm(v: number) {
-    setLoading(true);
 
     try {
       await remove(v);
@@ -76,7 +72,6 @@ const MainEntity = () => {
       });
     }
 
-    setLoading(false)
   }
 
   async function handleOpenEmptyForm() {
@@ -120,7 +115,7 @@ const MainEntity = () => {
       const entityForm = form.getFieldsValue() as Product;
 
       entityForm.createdOn = moment().toDate();
-      entityForm.precision = Number(entityForm.precision);
+      entityForm.precision = entityForm.precision;
       entityForm.size = Number(entityForm.size);
       entityForm.weight = Number(entityForm.weight);
 
@@ -134,6 +129,8 @@ const MainEntity = () => {
       setIsSavingForm(false);
       setIsModalOpen(false);
     } catch (error) {
+      console.error(error);
+
       notification["error"]({
         message: "Error",
         description:
@@ -149,7 +146,8 @@ const MainEntity = () => {
     form.resetFields();
   }
 
-  if (user === null) return (<div>Cargando...</div>)
+  if (product === undefined) return (<div>Cargando...</div>);
+  if (user === null) return (<div>Cargando...</div>);
 
   return (
     <main>
@@ -166,8 +164,11 @@ const MainEntity = () => {
           <Table
             dataSource={product}
             bordered size={"small"}
-            loading={loading} className="mt-3"
-            rowKey="id">
+            className="mt-3"
+            rowKey="id"
+            scroll={{ x: "100vh" }}
+
+          >
             {allowedRoles.includes(user.role) ?
               <Column<Product>
                 title='#'
@@ -223,8 +224,12 @@ const MainEntity = () => {
         onCancel={() => handleCancelForm()}
         confirmLoading={isSavingForm}
         style={{ top: "10px" }}
+        okText={
+          <div>{isSavingForm ? "Guardando..." : "Guardar"}</div>
+        }
       >
-        <Spin spinning={isModalLoading} tip={"Cargando..."} indicator={<LoadingOutlined style={{ fontSize: 24 }} spin />} >
+        <Spin spinning={isModalLoading} tip={"Cargando..."} indicator={<div></div>} >
+
 
           <Form
             form={form}
@@ -396,7 +401,7 @@ const MainEntity = () => {
               rules={[
                 { required: true, message: 'Valor requerido.' },
                 { min: 1, message: 'Se require como mínimo 1 caracteres.' },
-                { pattern: /^[a-zA-Z0-9\s]*$/, message: 'Solo se permiten letras, números y espacios.' }
+                { pattern: /^[a-zA-Z0-9]*$/, message: 'Solo se permiten letras, números' }
               ]}
               {...layout}
             >

@@ -4,7 +4,6 @@ import { add, getAll, remove, update, getById } from '../../Entitites/Category/r
 import { useForm } from 'antd/lib/form/Form';
 import moment from 'moment';
 import { Category } from '../../Entitites/Category/interface';
-import { LoadingOutlined } from '@ant-design/icons';
 
 const { Column } = Table;
 
@@ -17,7 +16,6 @@ const MainEntity = () => {
   const [form] = useForm();
 
   const [categories, setCategories] = useState<Category[]>();
-  const [loading, setLoading] = useState(false);
 
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [isModalLoading, setIsModalLoading] = useState<boolean>(false);
@@ -36,12 +34,10 @@ const MainEntity = () => {
   }
 
   useEffect(() => {
-    setLoading(true)
-    fetchAll().then(() => setLoading(false))
+    fetchAll()
   }, [])
 
   async function confirm(v: number) {
-    setLoading(true);
 
     try {
       await remove(v);
@@ -60,7 +56,6 @@ const MainEntity = () => {
       });
     }
 
-    setLoading(false)
   }
 
   async function handleOpenEmptyForm() {
@@ -84,6 +79,7 @@ const MainEntity = () => {
       setIsModalLoading(false);
 
     } catch (error) {
+      console.error(error);
       notification["error"]({
         message: "Error",
         description:
@@ -128,6 +124,8 @@ const MainEntity = () => {
     form.resetFields();
   }
 
+  if (categories === undefined) return (<div>Cargando...</div>);
+
   return (
     <main>
       <div className="row justify-content-end">
@@ -143,7 +141,6 @@ const MainEntity = () => {
           <Table
             dataSource={categories}
             bordered size={"small"}
-            loading={loading}
             className="mt-3"
             rowKey="id"
             scroll={{ x: "100vh" }}
@@ -185,9 +182,11 @@ const MainEntity = () => {
         visible={isModalOpen}
         onOk={() => handleSaveForm()}
         onCancel={() => handleCancelForm()}
-        confirmLoading={isSavingForm}
+        okText={
+          <div>{isSavingForm ? "Guardando..." : "Guardar"}</div>
+        }
       >
-        <Spin spinning={isModalLoading} tip={"Cargando..."} indicator={<LoadingOutlined style={{ fontSize: 24 }} spin />} >
+        <Spin spinning={isModalLoading} tip={"Cargando..."} indicator={<div></div>} >
 
           <Form
             form={form}

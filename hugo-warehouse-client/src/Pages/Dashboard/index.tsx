@@ -56,28 +56,36 @@ const Dashboard = () => {
       <section className="row mt-3">
 
         <div className="col-6">
-          <Card title="Productos (Tipos) Disponibles" bordered={false} loading={products === undefined}>
-            <Statistic title="Total" value={products?.length} prefix={<DotChartOutlined />} />
+          <Card title="Productos (Tipos) Disponibles" bordered={false} >
+
+            {products === undefined ? <div>Cargando...</div> : <Statistic title="Total" value={products?.length} prefix={<DotChartOutlined />} />}
+
           </Card>
         </div>
 
         <div className="col-6">
-          <Card title="Usuarios Disponibles" bordered={false} loading={users === undefined}>
-            <Statistic title="Total" value={users?.length} prefix={<UsergroupAddOutlined />} />
+          <Card title="Usuarios Disponibles" bordered={false}>
+            {users === undefined ? <div>Cargando...</div> : <Statistic title="Total" value={users?.length} prefix={<UsergroupAddOutlined />} />}
+
+
           </Card>
         </div>
       </section>
 
       <section className="row mt-4">
         <div className="col-6">
-          <Card title="Categorías Disponibles" bordered={false} loading={categories === undefined}>
-            <Statistic title="Total" value={categories?.length} prefix={<BorderBottomOutlined />} />
+          <Card title="Categorías Disponibles" bordered={false}>
+            {categories === undefined ? <div>Cargando...</div> : <Statistic title="Total" value={categories?.length} prefix={<BorderBottomOutlined />} />}
+
+
           </Card>
         </div>
 
         <div className="col-6">
-          <Card title="Proveedores Disponibles" bordered={false} loading={providers === undefined}>
-            <Statistic title="Total" value={providers?.length} prefix={ <ShrinkOutlined />} />
+          <Card title="Proveedores Disponibles" bordered={false} >
+            {providers === undefined ? <div>Cargando...</div> : <Statistic title="Total" value={providers?.length} prefix={<ShrinkOutlined />} />}
+
+
           </Card>
         </div>
       </section>

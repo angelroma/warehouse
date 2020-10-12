@@ -4,7 +4,7 @@ import { useForm } from 'antd/lib/form/Form';
 import moment from 'moment';
 import { Provider } from '../../Entitites/Provider/interface';
 import { add, getAll, remove, update, getById } from '../../Entitites/Provider/repository'
-import { LoadingOutlined } from '@ant-design/icons';
+
 
 const { Column } = Table;
 
@@ -17,7 +17,7 @@ const MainEntity = () => {
     const [form] = useForm();
 
     const [categories, setCategories] = useState<Provider[]>();
-    const [loading, setLoading] = useState(false);
+
 
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
     const [isModalLoading, setIsModalLoading] = useState<boolean>(false);
@@ -36,12 +36,10 @@ const MainEntity = () => {
     }
 
     useEffect(() => {
-        setLoading(true)
-        fetchAll().then(() => setLoading(false))
+        fetchAll()
     }, [])
 
     async function confirm(v: number) {
-        setLoading(true);
 
         try {
             await remove(v);
@@ -60,7 +58,6 @@ const MainEntity = () => {
             });
         }
 
-        setLoading(false)
     }
 
     async function handleOpenEmptyForm() {
@@ -113,6 +110,8 @@ const MainEntity = () => {
             setIsSavingForm(false);
             setIsModalOpen(false);
         } catch (error) {
+            console.error(error);
+
             notification["error"]({
                 message: "Error",
                 description:
@@ -127,6 +126,8 @@ const MainEntity = () => {
         setIsModalOpen(false);
         form.resetFields();
     }
+
+    if (categories === undefined) return (<div>Cargando...</div>);
 
     return (
         <main>
@@ -144,7 +145,6 @@ const MainEntity = () => {
                         dataSource={categories}
                         bordered
                         size={"small"}
-                        loading={loading}
                         className="mt-3"
                         rowKey="id"
                         scroll={{ x: "100vh" }}
@@ -185,10 +185,11 @@ const MainEntity = () => {
                 visible={isModalOpen}
                 onOk={() => handleSaveForm()}
                 onCancel={() => handleCancelForm()}
-                confirmLoading={isSavingForm}
+                okText={
+                    <div>{isSavingForm ? "Guardando..." : "Guardar"}</div>
+                }
             >
-                <Spin spinning={isModalLoading} tip={"Cargando..."} indicator={<LoadingOutlined style={{ fontSize: 24 }} spin />} >
-
+                <Spin spinning={isModalLoading} tip={"Cargando..."} indicator={<div></div>} >
                     <Form
                         form={form}
                         name="basic"
