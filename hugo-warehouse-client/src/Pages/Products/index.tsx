@@ -115,7 +115,7 @@ const MainEntity = () => {
       const entityForm = form.getFieldsValue() as Product;
 
       entityForm.createdOn = moment().toDate();
-      entityForm.precision = Number(entityForm.precision);
+      entityForm.precision = entityForm.precision;
       entityForm.size = Number(entityForm.size);
       entityForm.weight = Number(entityForm.weight);
 
@@ -401,7 +401,7 @@ const MainEntity = () => {
               rules={[
                 { required: true, message: 'Valor requerido.' },
                 { min: 1, message: 'Se require como mínimo 1 caracteres.' },
-                { pattern: /^[a-zA-Z0-9\s]*$/, message: 'Solo se permiten letras, números y espacios.' }
+                { pattern: /^[a-zA-Z0-9]*$/, message: 'Solo se permiten letras, números' }
               ]}
               {...layout}
             >
