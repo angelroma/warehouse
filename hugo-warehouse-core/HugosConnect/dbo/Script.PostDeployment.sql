@@ -128,3 +128,7 @@ VALUES
     N'Acme', -- Brand - nvarchar
     '2020-08-30 14:31:58' -- CreatedOn - datetime
 )
+
+Insert Into [HugosConnect].[dbo].[OperationType] ([Name])
+Values (N'agregar')
+,(N'eliminar')
