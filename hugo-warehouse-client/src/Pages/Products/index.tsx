@@ -115,7 +115,6 @@ const MainEntity = () => {
       const entityForm = form.getFieldsValue() as Product;
 
       entityForm.createdOn = moment().toDate();
-      entityForm.precision = entityForm.precision;
       entityForm.size = Number(entityForm.size);
       entityForm.weight = Number(entityForm.weight);
 

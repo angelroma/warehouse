@@ -37,7 +37,9 @@ const App = () => {
     loginByToken();
   }, [])
 
-  if (isAuthenticated === false || user === null) 
+  if (isAuthenticated === null)   return (<div>Cargando...</div>)
+
+  if (isAuthenticated === false || user === null)
     return (
       <Switch>
         <Route path="*" >
@@ -51,7 +53,7 @@ const App = () => {
       <section className="row">
         <div className="col-12">
           <Menu theme="dark" mode="horizontal" selectedKeys={[location.pathname]}>
-            <Menu.Item key={homePath} icon={<BorderBottomOutlined />} style={{ backgroundColor:"rgb(18, 99, 73)", color: "#FFF", fontWeight: "bold" }}><Link to={homePath} />Hugos Connect</Menu.Item>
+            <Menu.Item key={homePath} icon={<BorderBottomOutlined />} style={{ backgroundColor: "rgb(18, 99, 73)", color: "#FFF", fontWeight: "bold" }}><Link to={homePath} />Hugos Connect</Menu.Item>
             <Menu.Item key={operationsPath}><Link to={operationsPath} />Entrada y Salida (Operación)</Menu.Item>
 
             {allowedRoles.includes(user.role) ? <Menu.Item key={categoriesPath}><Link to={categoriesPath} />Categorias</Menu.Item> : null}

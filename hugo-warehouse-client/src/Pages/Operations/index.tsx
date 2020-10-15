@@ -81,11 +81,13 @@ const Entry = () => {
 
     useEffect(() => {
         fetchAll();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
 
     useEffect(() => {
         firstFetchOperations();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [rangePicker])
 
     if (products === undefined) return (<div>Cargando...</div>)

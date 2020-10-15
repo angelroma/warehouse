@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Form, Input, Button, notification } from 'antd';
+import { Form, Input, Button } from 'antd';
 import { Store } from 'antd/lib/form/interface';
 import './LoginPage.scss'
 import { AuthLoginRequest } from '../../Entitites/Auth/interface';

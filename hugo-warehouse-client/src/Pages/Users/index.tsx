@@ -9,7 +9,6 @@ import moment from 'moment';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../Store';
 import { AuthState } from '../../Entitites/Auth/interface';
-import { LoadingOutlined } from '@ant-design/icons';
 
 const { Column } = Table;
 const { Option } = Select;
