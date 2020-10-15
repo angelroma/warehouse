@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Table, notification, Button, Popconfirm, Modal, Form, Input, Select, Spin, InputNumber } from 'antd';
+import { Table, Button, Popconfirm, Modal, Form, Input, Select, Spin, InputNumber } from 'antd';
 import { add, getAll as getAllProducts, remove, update, getById, getAll } from '../../Entitites/Product/respository'
 import { useForm } from 'antd/lib/form/Form';
 import { getAll as getAllCategories } from '../../Entitites/Category/repository';
@@ -11,6 +11,7 @@ import { Provider } from '../../Entitites/Provider/interface';
 import { useSelector } from 'react-redux';
 import { AuthState } from '../../Entitites/Auth/interface';
 import { RootState } from '../../Store';
+import commonMessage from '../../CommonComponents/CommonMessage'
 
 const { Column } = Table;
 const { Option } = Select;
@@ -41,11 +42,7 @@ const MainEntity = () => {
         setProduct(users);
       });
     } catch (error) {
-      notification["error"]({
-        message: "Error",
-        description:
-          'No se pueden adquirir los usuarios.',
-      });
+      commonMessage('No se pueden adquirir los usuarios.');
     }
   }
 
@@ -58,20 +55,11 @@ const MainEntity = () => {
     try {
       await remove(v);
       await getAll().then((result) => setProduct(result));
+      commonMessage('La entidad se borró con éxito');
 
-      notification["success"]({
-        message: '¡Perfecto!',
-        description:
-          'La entidad se borró con éxito',
-      });
     } catch (error) {
-      notification["error"]({
-        message: "Error",
-        description:
-          'La entidad no se puede borrar, contacte al administrador.',
-      });
+      commonMessage('La entidad no se puede borrar, contacte al administrador.');
     }
-
   }
 
   async function handleOpenEmptyForm() {
@@ -97,11 +85,7 @@ const MainEntity = () => {
       setIsModalLoading(false);
 
     } catch (error) {
-      notification["error"]({
-        message: "Error",
-        description:
-          'Hay un error al actualizar o al actualizar.',
-      });
+      commonMessage('Hay un error al actualizar o al actualizar.');
       setIsModalLoading(false);
     }
   }
@@ -129,12 +113,7 @@ const MainEntity = () => {
       setIsModalOpen(false);
     } catch (error) {
       console.error(error);
-
-      notification["error"]({
-        message: "Error",
-        description:
-          'Hay un error al actualizar o al actualizar.',
-      });
+      commonMessage('Hay un error al actualizar o al actualizar.');
       setIsSavingForm(false);
     }
   }
@@ -173,6 +152,7 @@ const MainEntity = () => {
                 title='#'
                 render={(v) => (<div className="d-flex flex-row">
                   <Popconfirm
+                    icon={null}
                     title="¿Está securo de eliminar este registro?"
                     onConfirm={() => confirm(v.id)}
                     okText="Si"
@@ -233,6 +213,7 @@ const MainEntity = () => {
           <Form
             form={form}
             name="basic"
+            hideRequiredMark
           >
 
             <Form.Item

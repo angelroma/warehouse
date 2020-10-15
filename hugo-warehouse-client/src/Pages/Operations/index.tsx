@@ -1,4 +1,4 @@
-import { Button, Card, Form, Input, InputNumber, notification, Select, Statistic, Table } from "antd";
+import { Button, Card, Form, Input, InputNumber, Select, Statistic, Table } from "antd";
 import { useForm } from "antd/lib/form/Form";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
@@ -17,6 +17,7 @@ import { DateRangePicker } from "rsuite";
 import { ValueType } from "rsuite/lib/DateRangePicker";
 import { CSVLink } from "react-csv";
 import { Data } from "react-csv/components/CommonPropTypes";
+import commonMessage from '../../CommonComponents/CommonMessage'
 
 const { Option } = Select;
 
@@ -46,11 +47,7 @@ const Entry = () => {
             await getAllProducts().then((result) => setProducts(result));
         } catch (error) {
             console.error(error);
-            notification["error"]({
-                message: "Error",
-                description:
-                    'No se pueden adquirir las operaciones.',
-            });
+            commonMessage('No se pueden adquirir las operaciones.');
         }
     }
 
@@ -95,9 +92,14 @@ const Entry = () => {
     return (
         <main>
             <section className="row mb-4">
-                <div className="col-4">
+                <div className="col-sm-12 col-md-4">
 
-                    <Form form={form} layout="vertical" onFinish={onFinish}>
+                    <Form
+                        form={form}
+                        layout="vertical"
+                        onFinish={onFinish}
+                        hideRequiredMark
+                    >
                         <Form.Item
                             name="id"
                             className="d-none"
@@ -168,7 +170,7 @@ const Entry = () => {
 
                 </div>
 
-                <div className="col-8">
+                <div className="col-sm-12 col-md-8">
                     <Card title="Operaciones recientes:"
                         extra={
                             <div className={"d-flex align-items-center"}>
@@ -232,7 +234,7 @@ const Entry = () => {
             <section className="row">
 
                 {products?.map((item, index) => {
-                    return <div key={index} className="col-2">
+                    return <div key={index} className="col-sm-6 col-md-2">
                         <Card>
                             <Statistic title={item.name} value={item.currentTotal} />
                         </Card>

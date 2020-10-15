@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react'
-import { Table, notification, Button, Popconfirm, Modal, Form, Input, Spin } from 'antd';
+import { Table, Button, Popconfirm, Modal, Form, Input, Spin } from 'antd';
 import { add, getAll, remove, update, getById } from '../../Entitites/Category/repository'
 import { useForm } from 'antd/lib/form/Form';
 import moment from 'moment';
 import { Category } from '../../Entitites/Category/interface';
+import commonMessage from '../../CommonComponents/CommonMessage'
 
 const { Column } = Table;
 
@@ -25,11 +26,7 @@ const MainEntity = () => {
     try {
       await getAll().then((categories) => setCategories(categories));
     } catch (error) {
-      notification["error"]({
-        message: "Error",
-        description:
-          'No se pueden adquirir las categorias.',
-      });
+      commonMessage('No se pueden adquirir las categorias.');
     }
   }
 
@@ -42,20 +39,10 @@ const MainEntity = () => {
     try {
       await remove(v);
       await getAll().then((result) => setCategories(result));
-
-      notification["success"]({
-        message: '¡Perfecto!',
-        description:
-          'La entidad se borró con éxito',
-      });
+      commonMessage('La entidad se borró con éxito');
     } catch (error) {
-      notification["error"]({
-        message: "Error",
-        description:
-          'La entidad no se puede borrar, contacte al administrador.',
-      });
+      commonMessage('La entidad no se puede borrar, contacte al administrador.');
     }
-
   }
 
   async function handleOpenEmptyForm() {
@@ -80,11 +67,7 @@ const MainEntity = () => {
 
     } catch (error) {
       console.error(error);
-      notification["error"]({
-        message: "Error",
-        description:
-          'Hay un error al actualizar o al actualizar.',
-      });
+      commonMessage('Hay un error al actualizar o al actualizar.');
       setIsModalLoading(false);
     }
   }
@@ -109,11 +92,7 @@ const MainEntity = () => {
       setIsSavingForm(false);
       setIsModalOpen(false);
     } catch (error) {
-      notification["error"]({
-        message: "Error",
-        description:
-          'Hay un error al actualizar o al actualizar.',
-      });
+      commonMessage('Hay un error al actualizar o al actualizar.');
       setIsSavingForm(false);
     }
   }
@@ -150,6 +129,7 @@ const MainEntity = () => {
               title='#'
               render={(v) => (<div className="d-flex flex-row">
                 <Popconfirm
+                  icon={null}
                   title="¿Está securo de eliminar este registro?"
                   onConfirm={() => confirm(v.id)}
                   okText="Si"
@@ -191,6 +171,7 @@ const MainEntity = () => {
           <Form
             form={form}
             name="basic"
+            hideRequiredMark
           >
 
             <Form.Item

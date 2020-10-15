@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Statistic, Card, Calendar, notification } from 'antd';
+import { Statistic, Card, Calendar } from 'antd';
 import { DotChartOutlined, UsergroupAddOutlined, BorderBottomOutlined, ShrinkOutlined } from "@ant-design/icons";
 import moment from 'moment'
 import "./Dashboard.Style.scss"
@@ -11,6 +11,7 @@ import { getAll as getAllProducts } from '../../Entitites/Product/respository';
 import { getAll as getAllCategories } from '../../Entitites/Category/repository';
 import { getAll as getAllUsers } from '../../Entitites/User/repository';
 import { getAll as getAllProviders } from '../../Entitites/Provider/repository';
+import commonMessage from '../../CommonComponents/CommonMessage'
 
 moment.updateLocale('en', {
   weekdaysMin: ["D", "L", "M", "MI", "J", "V", "S"],
@@ -31,11 +32,7 @@ const Dashboard = () => {
       await getAllUsers().then((result) => setUsers(result));
       await getAllProviders().then((result) => setProviders(result));
     } catch (error) {
-      notification["error"]({
-        message: "Error",
-        description:
-          'No se pueden adquirir las entidades.',
-      });
+      commonMessage('No se pueden adquirir las entidades, contacte al administrador.');
     }
   }
 
@@ -55,7 +52,7 @@ const Dashboard = () => {
 
       <section className="row mt-3">
 
-        <div className="col-6">
+        <div className="col-sm-12 col-md-6">
           <Card title="Productos (Tipos) Disponibles" bordered={false} >
 
             {products === undefined ? <div>Cargando...</div> : <Statistic title="Total" value={products?.length} prefix={<DotChartOutlined />} />}
@@ -63,7 +60,7 @@ const Dashboard = () => {
           </Card>
         </div>
 
-        <div className="col-6">
+        <div className="col-sm-12  col-md-6">
           <Card title="Usuarios Disponibles" bordered={false}>
             {users === undefined ? <div>Cargando...</div> : <Statistic title="Total" value={users?.length} prefix={<UsergroupAddOutlined />} />}
 
@@ -73,7 +70,7 @@ const Dashboard = () => {
       </section>
 
       <section className="row mt-4">
-        <div className="col-6">
+        <div className="col-sm-12 col-md-6">
           <Card title="Categorías Disponibles" bordered={false}>
             {categories === undefined ? <div>Cargando...</div> : <Statistic title="Total" value={categories?.length} prefix={<BorderBottomOutlined />} />}
 
@@ -81,7 +78,7 @@ const Dashboard = () => {
           </Card>
         </div>
 
-        <div className="col-6">
+        <div className="col-sm-12 col-md-6">
           <Card title="Proveedores Disponibles" bordered={false} >
             {providers === undefined ? <div>Cargando...</div> : <Statistic title="Total" value={providers?.length} prefix={<ShrinkOutlined />} />}
 
