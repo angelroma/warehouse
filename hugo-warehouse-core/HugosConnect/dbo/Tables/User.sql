@@ -1,16 +1,18 @@
 ﻿CREATE TABLE [dbo].[User] (
-    [Id]         INT            IDENTITY (1, 1) NOT NULL,
-    [RoleId]     INT            NOT NULL,
-    [Name]      NVARCHAR (205)  NOT NULL,
-    [Age]        INT            NOT NULL,
-    [Email]      NVARCHAR (255) NOT NULL,
-    [Password]   NVARCHAR (350) NOT NULL,
-    [UserName]   NVARCHAR (25)  NOT NULL,
-    [Active] BIT NULL DEFAULT 1, 
-    [CreatedOn]  DATETIME       CONSTRAINT [DF_User_CreatedOn] DEFAULT (getdate()) NOT NULL,
+    [Id]        INT            IDENTITY (1, 1) NOT NULL,
+    [RoleId]    INT            NOT NULL,
+    [Name]      NVARCHAR (205) NOT NULL,
+    [Age]       INT            NOT NULL,
+    [Email]     NVARCHAR (255) NOT NULL,
+    [Password]  NVARCHAR (350) NOT NULL,
+    [UserName]  NVARCHAR (25)  NOT NULL,
+    [Active]    BIT            CONSTRAINT [DF__User__Active__403A8C7D] DEFAULT ((1)) NULL,
+    [CreatedOn] DATETIME       CONSTRAINT [DF_User_CreatedOn] DEFAULT (getdate()) NOT NULL,
     CONSTRAINT [PK_User] PRIMARY KEY CLUSTERED ([Id] ASC),
     CONSTRAINT [FK_User_Has_Role] FOREIGN KEY ([RoleId]) REFERENCES [dbo].[Role] ([Id])
 );
+
+
 
 
 
