@@ -13,7 +13,7 @@ import { Product } from "../../Entitites/Product/interface";
 import Column from "antd/lib/table/Column";
 import moment from "moment";
 import 'moment/locale/es-mx';
-import { DateRangePicker } from "rsuite";
+// import { DateRangePicker } from "rsuite";
 import { ValueType } from "rsuite/lib/DateRangePicker";
 import { CSVLink } from "react-csv";
 import { Data } from "react-csv/components/CommonPropTypes";
@@ -29,6 +29,7 @@ const Entry = () => {
     const [, forceUpdate] = useState<any>();
     const [form] = useForm();
     const [saving, setSaving] = useState<boolean>(false);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [rangePicker, setRangePicker] = useState<ValueType>([moment().subtract(5, 'd').toDate(), moment().add(1, 'd').toDate()])
 
     async function firstFetchOperations() {
@@ -190,7 +191,7 @@ const Entry = () => {
                                     </Button>
                                 </div>
 
-                                <div className="col-auto">
+                                {/* <div className="col-auto">
 
                                     <DateRangePicker
                                         showOneCalendar
@@ -216,14 +217,14 @@ const Entry = () => {
                                         }}
                                     />
 
-                                </div>
+                                </div> */}
 
                             </div>}
                     >
                         <Table
                             showHeader={false}
                             loading={operations === undefined}
-                            pagination={{ pageSize: 5, showSizeChanger: false }}
+                            pagination={{ pageSize: 5, showSizeChanger: false, }}
                             dataSource={operations}
                             size={"small"}
                             rowKey="id"
