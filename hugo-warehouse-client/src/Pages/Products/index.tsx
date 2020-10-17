@@ -244,7 +244,6 @@ const MainEntity = () => {
               rules={[
                 { required: true, message: 'Valor requerido.' },
                 { min: 5, message: 'Se require como mínimo 5 caracteres.' },
-                { pattern: regex, message: 'Solo se permiten letras, números y espacios.' }
               ]}
               {...layout}
             >

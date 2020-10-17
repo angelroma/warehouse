@@ -203,7 +203,6 @@ const MainEntity = () => {
                 { required: true, message: 'Valor requerido.' },
                 { min: 4, message: 'Se require como mínimo 4 caracteres.' },
                 { max: 250, message: 'Se require como máximo 250 caracteres.' },
-                { pattern: regex, message: 'Solo se permiten letras, números y espacios.' }
               ]}
               {...layout}
             >

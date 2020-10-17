@@ -231,7 +231,7 @@ const MainEntity = () => {
               rules={[
                 { required: true, message: 'Valor requerido' },
                 { min: 5, message: 'Se require como mínimo 5 caracteres.' },
-                { max: 15, message: 'Se require como máximo 15 caracteres.' },
+                { max: 150, message: 'Se require como máximo 150 caracteres.' },
               ]}
               {...layout}
 
