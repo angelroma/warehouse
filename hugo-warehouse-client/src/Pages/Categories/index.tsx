@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react'
-import { Table, notification, Button, Popconfirm, Modal, Form, Input, Spin } from 'antd';
+import { Table, Button, Popconfirm, Modal, Form, Input, Spin } from 'antd';
 import { add, getAll, remove, update, getById } from '../../Entitites/Category/repository'
 import { useForm } from 'antd/lib/form/Form';
 import moment from 'moment';
 import { Category } from '../../Entitites/Category/interface';
+import commonMessage from '../../CommonComponents/CommonMessage'
+import { addErrorMessage, deleteErrorMessage, listErrorMessage, regex, updateErrorMessage } from '../../Utils/custom.util';
 
 const { Column } = Table;
 
@@ -25,11 +27,7 @@ const MainEntity = () => {
     try {
       await getAll().then((categories) => setCategories(categories));
     } catch (error) {
-      notification["error"]({
-        message: "Error",
-        description:
-          'No se pueden adquirir las categorias.',
-      });
+      commonMessage(listErrorMessage);
     }
   }
 
@@ -42,20 +40,10 @@ const MainEntity = () => {
     try {
       await remove(v);
       await getAll().then((result) => setCategories(result));
-
-      notification["success"]({
-        message: '¡Perfecto!',
-        description:
-          'La entidad se borró con éxito',
-      });
+      commonMessage('La entidad se borró con éxito');
     } catch (error) {
-      notification["error"]({
-        message: "Error",
-        description:
-          'La entidad no se puede borrar, contacte al administrador.',
-      });
+      commonMessage(deleteErrorMessage);
     }
-
   }
 
   async function handleOpenEmptyForm() {
@@ -80,11 +68,7 @@ const MainEntity = () => {
 
     } catch (error) {
       console.error(error);
-      notification["error"]({
-        message: "Error",
-        description:
-          'Hay un error al actualizar o al actualizar.',
-      });
+      commonMessage(updateErrorMessage);
       setIsModalLoading(false);
     }
   }
@@ -109,11 +93,7 @@ const MainEntity = () => {
       setIsSavingForm(false);
       setIsModalOpen(false);
     } catch (error) {
-      notification["error"]({
-        message: "Error",
-        description:
-          'Hay un error al actualizar o al actualizar.',
-      });
+      commonMessage(addErrorMessage);
       setIsSavingForm(false);
     }
   }
@@ -150,6 +130,7 @@ const MainEntity = () => {
               title='#'
               render={(v) => (<div className="d-flex flex-row">
                 <Popconfirm
+                  icon={null}
                   title="¿Está securo de eliminar este registro?"
                   onConfirm={() => confirm(v.id)}
                   okText="Si"
@@ -191,6 +172,7 @@ const MainEntity = () => {
           <Form
             form={form}
             name="basic"
+            hideRequiredMark
           >
 
             <Form.Item
@@ -206,7 +188,8 @@ const MainEntity = () => {
               rules={[
                 { required: true, message: 'Valor requerido.' },
                 { min: 4, message: 'Se require como mínimo 4 caracteres.' },
-                { pattern: /^[a-zA-Z0-9\s]*$/, message: 'Solo se permiten letras, números y espacios.' }
+                { max: 25, message: 'Se require como máximo 25 caracteres.' },
+                { pattern: regex, message: 'Solo se permiten letras, números y espacios.' }
               ]}
               {...layout}
             >
@@ -219,7 +202,8 @@ const MainEntity = () => {
               rules={[
                 { required: true, message: 'Valor requerido.' },
                 { min: 4, message: 'Se require como mínimo 4 caracteres.' },
-                { pattern: /^[a-zA-Z0-9\s]*$/, message: 'Solo se permiten letras, números y espacios.' }
+                { max: 250, message: 'Se require como máximo 250 caracteres.' },
+                { pattern: regex, message: 'Solo se permiten letras, números y espacios.' }
               ]}
               {...layout}
             >

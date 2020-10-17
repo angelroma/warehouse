@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Table, notification, Button, Popconfirm, Modal, Form, Input, Select, Spin, InputNumber } from 'antd';
+import { Table, Button, Popconfirm, Modal, Form, Input, Select, Spin, InputNumber } from 'antd';
 import { User } from '../../Entitites/User/interface';
 import { add, getAll as getAllUsers, remove, update, getById, getAll } from '../../Entitites/User/repository'
 import { useForm } from 'antd/lib/form/Form';
@@ -9,7 +9,8 @@ import moment from 'moment';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../Store';
 import { AuthState } from '../../Entitites/Auth/interface';
-import { LoadingOutlined } from '@ant-design/icons';
+import commonMessage from '../../CommonComponents/CommonMessage'
+import { addErrorMessage, deleteErrorMessage, listErrorMessage, updateErrorMessage } from '../../Utils/custom.util';
 
 const { Column } = Table;
 const { Option } = Select;
@@ -35,11 +36,7 @@ const MainEntity = () => {
     try {
       await getAllUsers().then((users) => setUsers(users));
     } catch (error) {
-      notification["error"]({
-        message: "Error",
-        description:
-          'No se pueden adquirir los usuarios.',
-      });
+      commonMessage(listErrorMessage)
     }
   }
 
@@ -56,22 +53,11 @@ const MainEntity = () => {
 
       await remove(v);
       await getAll().then((result) => setUsers(result));
-
-      notification["success"]({
-        message: '¡Perfecto!',
-        description:
-          'La entidad se borró con éxito',
-      });
+      commonMessage('La entidad se borró con éxito')
     } catch (error) {
       console.error(error);
-
-      notification["error"]({
-        message: "Error",
-        description:
-          'La entidad no se puede borrar, contacte al administrador.',
-      });
+      commonMessage(deleteErrorMessage)
     }
-
   }
 
   async function handleOpenEmptyForm() {
@@ -94,12 +80,7 @@ const MainEntity = () => {
       setIsModalLoading(false);
 
     } catch (error) {
-
-      notification["error"]({
-        message: "Error",
-        description:
-          'Hay un error al actualizar o al actualizar.',
-      });
+      commonMessage(updateErrorMessage)
       setIsModalLoading(false);
     }
   }
@@ -124,11 +105,7 @@ const MainEntity = () => {
       setIsSavingForm(false);
       setIsModalOpen(false);
     } catch (error) {
-      notification["error"]({
-        message: "Error",
-        description:
-          'Hay un error al actualizar o al actualizar.',
-      });
+      commonMessage(addErrorMessage)
       setIsSavingForm(false);
     }
   }
@@ -166,6 +143,7 @@ const MainEntity = () => {
               key='id'
               render={(v) => (<div className="d-flex flex-row">
                 {v.id !== Number(user?.id) ? <Popconfirm
+                  icon={null}
                   title="¿Está securo de eliminar este registro?"
                   onConfirm={() => confirm(v.id)}
                   okText="Si"
@@ -222,6 +200,7 @@ const MainEntity = () => {
           <Form
             form={form}
             name="basic"
+            hideRequiredMark
           >
             <Form.Item
               className="d-none"
@@ -236,7 +215,7 @@ const MainEntity = () => {
               rules={[
                 { required: true, message: 'Valor requerido.' },
                 { min: 5, message: 'Se require como mínimo 5 caracteres.' },
-                { max: 10, message: 'Se require como máximo 10 caracteres.' },
+                { max: 15, message: 'Se require como máximo 15 caracteres.' },
                 { pattern: /^[a-z0-9]+$/i, message: 'Solo se permiten números y letras.' }
               ]}
               {...layout}
@@ -267,7 +246,9 @@ const MainEntity = () => {
               name="name"
               rules={[
                 { required: true, message: 'Valor requerido' },
-                { pattern: /^[a-zA-Z\s]*$/, message: 'Solo se permiten letras y espacios.' }
+                { min: 4, message: 'Se require como mínimo 4 caracteres.' },
+                { max: 37, message: 'Se require como máximo 37 caracteres.' },
+                { pattern: /^[a-zA-ZñÑ\u00E0-\u00FC\s]*$/, message: 'Solo se permiten letras y espacios.' }
               ]}
               {...layout}
 

@@ -48,6 +48,43 @@
   display: none;
 }
 
+//PopConfirm
+
+.ant-popover-placement-top, .ant-popover-placement-topLeft, .ant-popover-placement-topRight {
+  padding-bottom: 0; 
+}
+
+//Animations
+@animation-duration-slow: 0s; 
+@animation-duration-base: 0s;
+@animation-duration-fast: 0s; 
+
+@ease-base-out: cubic-bezier(0, 0, 0, 0);
+@ease-base-in: cubic-bezier(0, 0, 0, 0);
+@ease-out: cubic-bezier(0, 0, 0, 0);
+@ease-in: cubic-bezier(0, 0, 0, 0);
+@ease-in-out: cubic-bezier(0, 0, 0, 0);
+@ease-out-back: cubic-bezier(0, 0, 0, 0);
+@ease-in-back: cubic-bezier(0, 0, 0, 0);
+@ease-in-out-back: cubic-bezier(0, 0, 0, 0);
+@ease-out-circ: cubic-bezier(0, 0, 0, 0);
+@ease-in-circ: cubic-bezier(0, 0, 0, 0);
+@ease-in-out-circ: cubic-bezier(0, 0, 0, 0);
+@ease-out-quint: cubic-bezier(0, 0, 0, 0);
+@ease-in-quint: cubic-bezier(0, 0, 0, 0);
+@ease-in-out-quint: cubic-bezier(0, 0, 0, 0);
+
+.ant-form-item-extra {
+  transition: color 0s cubic-bezier(0, 0, 0, 0) !important;
+}
+
+
+
+//Message
+.anticon-info-circle {
+  display: none;
+}
+
 //Initial global styles
 
 html,
@@ -56,4 +93,8 @@ body,
   max-width: 100%;
   overflow-x: hidden;
   background-color: #EDF0F5;
+}
+
+* {
+  animation-duration: 0s !important;
 }

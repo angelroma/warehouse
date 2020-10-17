@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Table, notification, Button, Popconfirm, Modal, Form, Input, Select, Spin, InputNumber } from 'antd';
+import { Table, Button, Popconfirm, Modal, Form, Input, Select, Spin, InputNumber } from 'antd';
 import { add, getAll as getAllProducts, remove, update, getById, getAll } from '../../Entitites/Product/respository'
 import { useForm } from 'antd/lib/form/Form';
 import { getAll as getAllCategories } from '../../Entitites/Category/repository';
@@ -11,6 +11,8 @@ import { Provider } from '../../Entitites/Provider/interface';
 import { useSelector } from 'react-redux';
 import { AuthState } from '../../Entitites/Auth/interface';
 import { RootState } from '../../Store';
+import commonMessage from '../../CommonComponents/CommonMessage'
+import { addErrorMessage, deleteErrorMessage, listErrorMessage, regex, updateErrorMessage } from '../../Utils/custom.util';
 
 const { Column } = Table;
 const { Option } = Select;
@@ -41,11 +43,7 @@ const MainEntity = () => {
         setProduct(users);
       });
     } catch (error) {
-      notification["error"]({
-        message: "Error",
-        description:
-          'No se pueden adquirir los usuarios.',
-      });
+      commonMessage(listErrorMessage);
     }
   }
 
@@ -58,20 +56,11 @@ const MainEntity = () => {
     try {
       await remove(v);
       await getAll().then((result) => setProduct(result));
+      commonMessage('La entidad se borró con éxito');
 
-      notification["success"]({
-        message: '¡Perfecto!',
-        description:
-          'La entidad se borró con éxito',
-      });
     } catch (error) {
-      notification["error"]({
-        message: "Error",
-        description:
-          'La entidad no se puede borrar, contacte al administrador.',
-      });
+      commonMessage(deleteErrorMessage);
     }
-
   }
 
   async function handleOpenEmptyForm() {
@@ -97,11 +86,7 @@ const MainEntity = () => {
       setIsModalLoading(false);
 
     } catch (error) {
-      notification["error"]({
-        message: "Error",
-        description:
-          'Hay un error al actualizar o al actualizar.',
-      });
+      commonMessage(updateErrorMessage);
       setIsModalLoading(false);
     }
   }
@@ -115,7 +100,6 @@ const MainEntity = () => {
       const entityForm = form.getFieldsValue() as Product;
 
       entityForm.createdOn = moment().toDate();
-      entityForm.precision = entityForm.precision;
       entityForm.size = Number(entityForm.size);
       entityForm.weight = Number(entityForm.weight);
 
@@ -130,12 +114,7 @@ const MainEntity = () => {
       setIsModalOpen(false);
     } catch (error) {
       console.error(error);
-
-      notification["error"]({
-        message: "Error",
-        description:
-          'Hay un error al actualizar o al actualizar.',
-      });
+      commonMessage(addErrorMessage);
       setIsSavingForm(false);
     }
   }
@@ -174,6 +153,7 @@ const MainEntity = () => {
                 title='#'
                 render={(v) => (<div className="d-flex flex-row">
                   <Popconfirm
+                    icon={null}
                     title="¿Está securo de eliminar este registro?"
                     onConfirm={() => confirm(v.id)}
                     okText="Si"
@@ -234,6 +214,7 @@ const MainEntity = () => {
           <Form
             form={form}
             name="basic"
+            hideRequiredMark
           >
 
             <Form.Item
@@ -249,7 +230,8 @@ const MainEntity = () => {
               rules={[
                 { required: true, message: 'Valor requerido.' },
                 { min: 5, message: 'Se require como mínimo 5 caracteres.' },
-                { pattern: /^[a-zA-Z0-9\s]*$/, message: 'Solo se permiten letras, números y espacios.' }
+                { max: 255, message: 'Se require como máximo 255 caracteres.' },
+                { pattern: regex, message: 'Solo se permiten letras, números y espacios.' }
               ]}
               {...layout}
             >
@@ -262,7 +244,7 @@ const MainEntity = () => {
               rules={[
                 { required: true, message: 'Valor requerido.' },
                 { min: 5, message: 'Se require como mínimo 5 caracteres.' },
-                { pattern: /^[a-zA-Z0-9\s]*$/, message: 'Solo se permiten letras, números y espacios.' }
+                { pattern: regex, message: 'Solo se permiten letras, números y espacios.' }
               ]}
               {...layout}
             >
@@ -278,10 +260,10 @@ const MainEntity = () => {
                 {
                   validator(_rule, value) {
                     console.log(value)
-                    if (value <= 50000) {
+                    if (value >= 1 && value <= 50000) {
                       return Promise.resolve();
                     }
-                    return Promise.reject('El precio máximo permitido es de 50 mil MXN');
+                    return Promise.reject('El precio máximo permitido es de 50 mil MXN y mínimo 1 MXN');
                   },
                 }]}
               {...layout}
@@ -289,6 +271,7 @@ const MainEntity = () => {
               <InputNumber
                 placeholder="Precio"
                 max={50000}
+                min={1}
                 width={300}
               />
             </Form.Item>
@@ -340,7 +323,8 @@ const MainEntity = () => {
               name="color"
               rules={[
                 { required: true, message: 'Valor requerido.' },
-                { min: 4, message: 'Se require como mínimo 4 caracteres.' },
+                { min: 3, message: 'Se require como mínimo 3 caracteres.' },
+                { max: 30, message: 'Se require como mínimo 30 caracteres.' },
                 { pattern: /^[a-zA-Z\s]*$/, message: 'Solo se permiten letras y espacios.' }
               ]}
               {...layout}
@@ -357,10 +341,10 @@ const MainEntity = () => {
                 {
                   validator(_rule, value) {
                     console.log(value)
-                    if (value <= 120) {
+                    if (value >= 1 && value <= 120) {
                       return Promise.resolve();
                     }
-                    return Promise.reject('El tamño máximo permitido es de 120');
+                    return Promise.reject('El tamño máximo permitido es de 120 y mínimo es 1');
                   },
                 }]}
               {...layout}
@@ -401,6 +385,7 @@ const MainEntity = () => {
               rules={[
                 { required: true, message: 'Valor requerido.' },
                 { min: 1, message: 'Se require como mínimo 1 caracteres.' },
+                { max: 12, message: 'Se require como máximo 12 caracteres.' },
                 { pattern: /^[a-zA-Z0-9]*$/, message: 'Solo se permiten letras, números' }
               ]}
               {...layout}
@@ -413,7 +398,9 @@ const MainEntity = () => {
               name="brand"
               rules={[
                 { required: true, message: 'Valor requerido' },
-                { pattern: /^[a-zA-Z\s]*$/, message: 'Solo se permiten letras y espacios.' }
+                { min: 4, message: 'Se require como mínimo 4 caracteres.' },
+                { max: 45, message: 'Se require como máximo 45 caracteres.' },
+                { pattern: regex, message: 'Solo se permiten letras y espacios.' }
               ]}
               {...layout}
             >
