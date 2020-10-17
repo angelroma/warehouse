@@ -10,6 +10,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../Store';
 import { AuthState } from '../../Entitites/Auth/interface';
 import commonMessage from '../../CommonComponents/CommonMessage'
+import { addErrorMessage, deleteErrorMessage, listErrorMessage, updateErrorMessage } from '../../Utils/custom.util';
 
 const { Column } = Table;
 const { Option } = Select;
@@ -35,7 +36,7 @@ const MainEntity = () => {
     try {
       await getAllUsers().then((users) => setUsers(users));
     } catch (error) {
-      commonMessage('No se pueden adquirir los usuarios.')
+      commonMessage(listErrorMessage)
     }
   }
 
@@ -55,7 +56,7 @@ const MainEntity = () => {
       commonMessage('La entidad se borró con éxito')
     } catch (error) {
       console.error(error);
-      commonMessage('La entidad no se puede borrar, contacte al administrador.')
+      commonMessage(deleteErrorMessage)
     }
   }
 
@@ -79,7 +80,7 @@ const MainEntity = () => {
       setIsModalLoading(false);
 
     } catch (error) {
-      commonMessage('Hay un error al actualizar o al actualizar.',)
+      commonMessage(updateErrorMessage)
       setIsModalLoading(false);
     }
   }
@@ -104,7 +105,7 @@ const MainEntity = () => {
       setIsSavingForm(false);
       setIsModalOpen(false);
     } catch (error) {
-      commonMessage('Hay un error al actualizar o al actualizar.')
+      commonMessage(addErrorMessage)
       setIsSavingForm(false);
     }
   }
@@ -214,7 +215,7 @@ const MainEntity = () => {
               rules={[
                 { required: true, message: 'Valor requerido.' },
                 { min: 5, message: 'Se require como mínimo 5 caracteres.' },
-                { max: 10, message: 'Se require como máximo 10 caracteres.' },
+                { max: 15, message: 'Se require como máximo 15 caracteres.' },
                 { pattern: /^[a-z0-9]+$/i, message: 'Solo se permiten números y letras.' }
               ]}
               {...layout}
@@ -245,7 +246,9 @@ const MainEntity = () => {
               name="name"
               rules={[
                 { required: true, message: 'Valor requerido' },
-                { pattern: /^[a-zA-Z\s]*$/, message: 'Solo se permiten letras y espacios.' }
+                { min: 4, message: 'Se require como mínimo 4 caracteres.' },
+                { max: 37, message: 'Se require como máximo 37 caracteres.' },
+                { pattern: /^[a-zA-ZñÑ\u00E0-\u00FC\s]*$/, message: 'Solo se permiten letras y espacios.' }
               ]}
               {...layout}
 

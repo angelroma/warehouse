@@ -5,6 +5,7 @@ import moment from 'moment';
 import { Provider } from '../../Entitites/Provider/interface';
 import { add, getAll, remove, update, getById } from '../../Entitites/Provider/repository'
 import commonMessage from '../../CommonComponents/CommonMessage'
+import { addErrorMessage, deleteErrorMessage, listErrorMessage, regex, updateErrorMessage } from '../../Utils/custom.util';
 
 const { Column } = Table;
 
@@ -27,7 +28,7 @@ const MainEntity = () => {
         try {
             await getAll().then((categories) => setCategories(categories));
         } catch (error) {
-            commonMessage('No se pueden adquirir las categorias.');
+            commonMessage(listErrorMessage);
         }
     }
 
@@ -42,7 +43,7 @@ const MainEntity = () => {
             await getAll().then((result) => setCategories(result));
             commonMessage('La entidad se borró con éxito');
         } catch (error) {
-            commonMessage('La entidad no se puede borrar, contacte al administrador.');
+            commonMessage(deleteErrorMessage);
         }
     }
 
@@ -67,7 +68,7 @@ const MainEntity = () => {
             setIsModalLoading(false);
 
         } catch (error) {
-            commonMessage('Hay un error al actualizar o al actualizar.');
+            commonMessage(updateErrorMessage);
             setIsModalLoading(false);
         }
     }
@@ -93,7 +94,7 @@ const MainEntity = () => {
             setIsModalOpen(false);
         } catch (error) {
             console.error(error);
-            commonMessage('Hay un error al actualizar o al actualizar.');
+            commonMessage(addErrorMessage);
             setIsSavingForm(false);
         }
     }
@@ -186,7 +187,9 @@ const MainEntity = () => {
                             name="name"
                             rules={[
                                 { required: true, message: 'Valor requerido.' },
-                                { pattern: /^[a-zA-Z\s]*$/, message: 'Solo se permiten letras y espacios.' }
+                                { min: 4, message: 'Se require como mínimo 4 caracteres.' },
+                                { max: 35, message: 'Se require como máximo 35 caracteres.' },
+                                { pattern: regex, message: 'Solo se permiten letras, números y espacios.' }
                             ]}
                             {...layout}
                         >
