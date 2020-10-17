@@ -51,11 +51,18 @@ namespace HugoWarehouse.Controllers
                 return BadRequest();
             }
 
-            var found = await _context.User.Where(x => x.Id == user.Id).FirstOrDefaultAsync();
+            var found = await _context.User.Where(x => x.Id == id).FirstOrDefaultAsync();
+
+            found.Name = user.Name;
+            found.RoleId = user.RoleId;
+            found.Age = user.Age;
+            found.Email = user.Email;
+            found.UserName = user.UserName;
+            found.Active = user.Active;
 
             if (found.Password != user.Password) user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
 
-            _context.Entry(user).State = EntityState.Modified;
+            _context.Entry(found).State = EntityState.Modified;
 
             try
             {
