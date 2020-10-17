@@ -30,7 +30,7 @@ VALUES
     'Miguel Angel Rodriguez Martinez', 
     25, 
     'an.coderoma@gmail.com', 
-    'Mente!0Unica',
+    '$2a$11$Nt1uNz3Qj8FZjK4laV50XOFE60ZVCxRjiH3hQ7Lym5zvWw2tcoLAu',
     'angelroma',
     1
 )

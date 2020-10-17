@@ -19,9 +19,13 @@ namespace HugoWarehouse.Services
 
         public async Task<string> Login(string username, string password)
         {
-            var user = await _context.User.Include(x=>x.Role).FirstOrDefaultAsync(u => u.UserName == username && u.Password == password);
+            var user = await _context.User.Include(x => x.Role).FirstOrDefaultAsync(u => u.UserName == username);
 
             if (user == null) throw new Exception("Verifica tu contraseña o tu nombre de usuario.");
+
+            var flag = BCrypt.Net.BCrypt.Verify(password, user.Password);
+
+            if (!flag) throw new Exception("Credenciales Incorrectas");
 
             return TokenUtils.GenerateJsonWebToken(user);
         }

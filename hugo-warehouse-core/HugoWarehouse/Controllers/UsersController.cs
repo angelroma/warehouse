@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using HugoWarehouse.Models.Poco;
@@ -24,7 +23,7 @@ namespace HugoWarehouse.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<User>>> GetUser()
         {
-            return await _context.User.Include(x=>x.Role).ToListAsync();
+            return await _context.User.Include(x => x.Role).ToListAsync(); ;
         }
 
         // GET: api/Users/5
@@ -52,7 +51,18 @@ namespace HugoWarehouse.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(user).State = EntityState.Modified;
+            var found = await _context.User.Where(x => x.Id == id).FirstOrDefaultAsync();
+
+            found.Name = user.Name;
+            found.RoleId = user.RoleId;
+            found.Age = user.Age;
+            found.Email = user.Email;
+            found.UserName = user.UserName;
+            found.Active = user.Active;
+
+            if (found.Password != user.Password) user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
+
+            _context.Entry(found).State = EntityState.Modified;
 
             try
             {
@@ -79,6 +89,12 @@ namespace HugoWarehouse.Controllers
         [HttpPost]
         public async Task<ActionResult<User>> PostUser(User user)
         {
+            var found = await _context.User.Where(x => x.UserName == user.UserName).FirstOrDefaultAsync();
+
+            if (found != null) return BadRequest("Usuario ya existe en la base de datos.");
+
+            user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
+
             _context.User.Add(user);
             await _context.SaveChangesAsync();
 
