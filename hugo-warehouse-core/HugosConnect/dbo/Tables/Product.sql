@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [dbo].[Product] (
     [Id]           INT            IDENTITY (1, 1) NOT NULL,
-    [CategoryId]   INT            NOT NULL,
+    [CategoryId]   INT            NULL,
     [ProviderId]   INT            NULL,
     [Name]         NVARCHAR (255) NOT NULL,
     [Description]  TEXT           NOT NULL,
@@ -15,9 +15,11 @@
     [Active]       BIT            CONSTRAINT [DF__Product__Active__3B75D760] DEFAULT ((1)) NULL,
     [CreatedOn]    DATETIME       CONSTRAINT [DF_Product_CreatedOn] DEFAULT (getdate()) NOT NULL,
     CONSTRAINT [PK_Product] PRIMARY KEY CLUSTERED ([Id] ASC),
-    CONSTRAINT [FK__Product__Provide__440B1D61] FOREIGN KEY ([ProviderId]) REFERENCES [dbo].[Provider] ([Id]),
-    CONSTRAINT [FK_Product_Has_Category] FOREIGN KEY ([CategoryId]) REFERENCES [dbo].[Category] ([Id])
+    CONSTRAINT [FK__Product__Provide__440B1D61] FOREIGN KEY ([ProviderId]) REFERENCES [dbo].[Provider] ([Id]) ON DELETE SET NULL ON UPDATE SET NULL,
+    CONSTRAINT [FK_Product_Has_Category] FOREIGN KEY ([CategoryId]) REFERENCES [dbo].[Category] ([Id]) ON DELETE SET NULL ON UPDATE SET NULL
 );
+
+
 
 
 

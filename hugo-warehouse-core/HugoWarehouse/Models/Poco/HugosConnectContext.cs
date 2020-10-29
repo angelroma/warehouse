@@ -71,6 +71,7 @@ namespace HugoWarehouse.Models.Poco
                 entity.HasOne(d => d.Product)
                     .WithMany(p => p.Operation)
                     .HasForeignKey(d => d.ProductId)
+                    .OnDelete(DeleteBehavior.SetNull)
                     .HasConstraintName("FK_Operation_Has_Product");
 
                 entity.HasOne(d => d.User)
@@ -126,12 +127,13 @@ namespace HugoWarehouse.Models.Poco
                 entity.HasOne(d => d.Category)
                     .WithMany(p => p.Product)
                     .HasForeignKey(d => d.CategoryId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .OnDelete(DeleteBehavior.SetNull)
                     .HasConstraintName("FK_Product_Has_Category");
 
                 entity.HasOne(d => d.Provider)
                     .WithMany(p => p.Product)
                     .HasForeignKey(d => d.ProviderId)
+                    .OnDelete(DeleteBehavior.SetNull)
                     .HasConstraintName("FK__Product__Provide__440B1D61");
             });
 
