@@ -66,7 +66,7 @@ namespace HugoWarehouse.Models.Poco
                     .WithMany(p => p.Operation)
                     .HasForeignKey(d => d.OperationTypeId)
                     .OnDelete(DeleteBehavior.SetNull)
-                    .HasConstraintName("FK_Has_OperationType");
+                    .HasConstraintName("FK_Operation_Has_OperationType");
 
                 entity.HasOne(d => d.Product)
                     .WithMany(p => p.Operation)
@@ -114,6 +114,11 @@ namespace HugoWarehouse.Models.Poco
                     .IsRequired()
                     .HasMaxLength(255);
 
+                entity.Property(e => e.Precision)
+                    .IsRequired()
+                    .HasMaxLength(12)
+                    .HasDefaultValueSql("((0.0))");
+
                 entity.Property(e => e.Sku)
                     .IsRequired()
                     .HasMaxLength(25)
@@ -129,7 +134,7 @@ namespace HugoWarehouse.Models.Poco
                     .WithMany(p => p.Product)
                     .HasForeignKey(d => d.ProviderId)
                     .OnDelete(DeleteBehavior.SetNull)
-                    .HasConstraintName("FK__Product__Provide__06CD04F7");
+                    .HasConstraintName("FK__Product__Provide__440B1D61");
             });
 
             modelBuilder.Entity<Provider>(entity =>
@@ -187,7 +192,7 @@ namespace HugoWarehouse.Models.Poco
                 entity.HasOne(d => d.Role)
                     .WithMany(p => p.User)
                     .HasForeignKey(d => d.RoleId)
-                    .OnDelete(DeleteBehavior.SetNull)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_User_Has_Role");
             });
 

@@ -11,7 +11,7 @@ namespace HugoWarehouse.Models.Poco
         }
 
         public int Id { get; set; }
-        public int? RoleId { get; set; }
+        public int RoleId { get; set; }
         public string Name { get; set; }
         public int Age { get; set; }
         public string Email { get; set; }
