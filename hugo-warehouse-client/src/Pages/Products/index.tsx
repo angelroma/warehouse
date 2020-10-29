@@ -379,7 +379,7 @@ const MainEntity = () => {
             </Form.Item>
 
             <Form.Item
-              label="Presición"
+              label="Precisión"
               name="precision"
               rules={[
                 { required: true, message: 'Valor requerido.' },
@@ -389,7 +389,7 @@ const MainEntity = () => {
               ]}
               {...layout}
             >
-              <Input placeholder="Presición" />
+              <Input placeholder="Precisión" />
             </Form.Item>
 
             <Form.Item
