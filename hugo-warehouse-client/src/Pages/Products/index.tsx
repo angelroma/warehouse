@@ -182,7 +182,7 @@ const MainEntity = () => {
               }}
             />
             <Column<Product>
-              title='Precio'
+              title='Precio (MXN)'
               dataIndex='price'
             />
             <Column<Product>
@@ -251,7 +251,7 @@ const MainEntity = () => {
             </Form.Item>
 
             <Form.Item
-              label="precio"
+              label="Precio (MXN)"
               name="price"
               rules={[
                 { required: true, message: 'Valor requerido' },
@@ -356,7 +356,7 @@ const MainEntity = () => {
             </Form.Item>
 
             <Form.Item
-              label="Peso"
+              label="Peso (KG)"
               name="weight"
               rules={[
                 { required: true, message: 'Valor requerido.' },
@@ -379,7 +379,7 @@ const MainEntity = () => {
             </Form.Item>
 
             <Form.Item
-              label="Presición"
+              label="Precisión"
               name="precision"
               rules={[
                 { required: true, message: 'Valor requerido.' },
@@ -389,7 +389,7 @@ const MainEntity = () => {
               ]}
               {...layout}
             >
-              <Input placeholder="Presición" />
+              <Input placeholder="Precisión" />
             </Form.Item>
 
             <Form.Item

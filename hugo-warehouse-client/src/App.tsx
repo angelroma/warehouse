@@ -37,7 +37,7 @@ const App = () => {
     loginByToken();
   }, [])
 
-  if (isAuthenticated === null)   return (<div>Cargando...</div>)
+  if (isAuthenticated === null) return (<div>Cargando...</div>)
 
   if (isAuthenticated === false || user === null)
     return (
@@ -56,7 +56,7 @@ const App = () => {
             <Menu.Item key={homePath} icon={<BorderBottomOutlined />} style={{ backgroundColor: "rgb(18, 99, 73)", color: "#FFF", fontWeight: "bold" }}><Link to={homePath} />Hugos Connect</Menu.Item>
             <Menu.Item key={operationsPath}><Link to={operationsPath} />Entrada y Salida (Operación)</Menu.Item>
 
-            {allowedRoles.includes(user.role) ? <Menu.Item key={categoriesPath}><Link to={categoriesPath} />Categorias</Menu.Item> : null}
+            {allowedRoles.includes(user.role) ? <Menu.Item key={categoriesPath}><Link to={categoriesPath} />Categorías</Menu.Item> : null}
             {allowedRoles.includes(user.role) ? <Menu.Item key={providersPath}><Link to={providersPath} />Proveedores </Menu.Item> : null}
             {allowedRoles.includes(user.role) ? <Menu.Item key={productsPath}><Link to={productsPath} />Tipos de Producto</Menu.Item> : null}
             {allowedRoles.includes(user.role) ? <Menu.Item key={usersPath}><Link to={usersPath} />Usuarios</Menu.Item> : null}
@@ -76,24 +76,41 @@ const App = () => {
                 <Dashboard />
               </Route>
 
-              <Route path={usersPath} >
-                <Users />
-              </Route>
+              {user.role === "admin" ?
+                <Route path={usersPath} >
+                  <Users />
+                </Route>
+
+                :
+                null
+              }
+
+              {user.role === "admin" ?
+                <Route exact path={productsPath} >
+                  <Products />
+                </Route>
+                :
+                null
+              }
+
+              {user.role === "admin" ?
+                <Route exact path={categoriesPath}>
+                  <Categories />
+                </Route>
+                :
+                null
+              }
+
+              {user.role === "admin" ?
+                <Route exact path={providersPath}>
+                  <Providers />
+                </Route>
+                :
+                null
+              }
 
               <Route path={operationsPath} >
                 <Operations />
-              </Route>
-
-              <Route exact path={productsPath} >
-                <Products />
-              </Route>
-
-              <Route exact path={categoriesPath}>
-                <Categories />
-              </Route>
-
-              <Route exact path={providersPath}>
-                <Providers />
               </Route>
 
               <Route path="*">

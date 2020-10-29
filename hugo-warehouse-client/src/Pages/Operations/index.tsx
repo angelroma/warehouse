@@ -1,4 +1,4 @@
-import { Button, Card, Form, Input, InputNumber, Select, Statistic, Table } from "antd";
+import { Button, Card, Form, Input, InputNumber, Select, Table } from "antd";
 import { useForm } from "antd/lib/form/Form";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
@@ -13,7 +13,7 @@ import { Product } from "../../Entitites/Product/interface";
 import Column from "antd/lib/table/Column";
 import moment from "moment";
 import 'moment/locale/es-mx';
-import { DateRangePicker } from "rsuite";
+// import { DateRangePicker } from "rsuite";
 import { ValueType } from "rsuite/lib/DateRangePicker";
 import { CSVLink } from "react-csv";
 import { Data } from "react-csv/components/CommonPropTypes";
@@ -29,6 +29,7 @@ const Entry = () => {
     const [, forceUpdate] = useState<any>();
     const [form] = useForm();
     const [saving, setSaving] = useState<boolean>(false);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [rangePicker, setRangePicker] = useState<ValueType>([moment().subtract(5, 'd').toDate(), moment().add(1, 'd').toDate()])
 
     async function firstFetchOperations() {
@@ -173,50 +174,57 @@ const Entry = () => {
                 <div className="col-sm-12 col-md-8">
                     <Card title="Operaciones recientes:"
                         extra={
-                            <div className={"d-flex align-items-center"}>
-                                <DateRangePicker
-                                    showOneCalendar
-                                    cleanable={false}
-                                    placeholder="Rango de fecha"
-                                    format="YYYY-MM-DD"
-                                    placement="leftStart"
-                                    value={rangePicker}
-                                    ranges={[]}
-                                    onChange={(v) => setRangePicker(v)}
-                                    locale={{
-                                        sunday: 'D',
-                                        monday: 'L',
-                                        tuesday: 'M',
-                                        wednesday: 'MI',
-                                        thursday: 'J',
-                                        friday: 'V',
-                                        saturday: 'S',
-                                        ok: 'OK',
-                                        today: 'Hoy',
-                                        yesterday: 'Ayer',
-                                        last7Days: 'Últimos 7 días'
-                                    }}
-                                />
+                            <div className={"row"}>
+                                <div className="col-auto">
+                                    <Button className="ml-3">
+                                        <CSVLink
+                                            filename={`reporte_${Date.now()}.csv`}
+                                            data={operations as Data}
+                                            headers={
+                                                [
+                                                    { label: "Producto id", key: "productId" },
+                                                    { label: "Proceso", key: "description" },
+                                                    { label: "Cantidad Absoluta", key: "queantity" },
+                                                    { label: "Fecha", key: "createdOn" }
+                                                ]
+                                            }>Generar Reporte</CSVLink>
+                                    </Button>
+                                </div>
 
-                                <Button className="ml-3">
-                                    <CSVLink
-                                        filename={`reporte_${Date.now()}.csv`}
-                                        data={operations as Data}
-                                        headers={
-                                            [
-                                                { label: "Producto id", key: "productId" },
-                                                { label: "Proceso", key: "description" },
-                                                { label: "Cantidad Absoluta", key: "queantity" },
-                                                { label: "Fecha", key: "createdOn" }
-                                            ]
-                                        }>Generar Reporte</CSVLink>
-                                </Button>
+                                {/* <div className="col-auto">
+
+                                    <DateRangePicker
+                                        showOneCalendar
+                                        cleanable={false}
+                                        placeholder="Rango de fecha"
+                                        format="YYYY-MM-DD"
+                                        placement="leftStart"
+                                        value={rangePicker}
+                                        ranges={[]}
+                                        onChange={(v) => setRangePicker(v)}
+                                        locale={{
+                                            sunday: 'D',
+                                            monday: 'L',
+                                            tuesday: 'M',
+                                            wednesday: 'MI',
+                                            thursday: 'J',
+                                            friday: 'V',
+                                            saturday: 'S',
+                                            ok: 'OK',
+                                            today: 'Hoy',
+                                            yesterday: 'Ayer',
+                                            last7Days: 'Últimos 7 días'
+                                        }}
+                                    />
+
+                                </div> */}
+
                             </div>}
                     >
                         <Table
                             showHeader={false}
                             loading={operations === undefined}
-                            pagination={{ pageSize: 5, showSizeChanger: false }}
+                            pagination={{ pageSize: 5, showSizeChanger: false, }}
                             dataSource={operations}
                             size={"small"}
                             rowKey="id"
@@ -231,17 +239,29 @@ const Entry = () => {
                 </div>
             </section>
 
-            <section className="row">
 
-                {products?.map((item, index) => {
-                    return <div key={index} className="col-sm-6 col-md-2">
-                        <Card>
-                            <Statistic title={item.name} value={item.currentTotal} />
-                        </Card>
-                    </div>
-                })}
+            <div className="row">
+                <div className="col-12">
+                    <Table
+                        dataSource={products}
+                        bordered size={"small"}
+                        className="mt-3"
+                        scroll={{ x: "100vh" }}
+                        rowKey="id"
+                    >
+                        <Column
+                            title='Producto'
+                            dataIndex='name'
+                        />
+                        <Column
+                            title='Cantidad'
+                            dataIndex='currentTotal'
+                        />
+                    </Table>
+                </div>
+            </div>
 
-            </section>
+
         </main >
     )
 }
