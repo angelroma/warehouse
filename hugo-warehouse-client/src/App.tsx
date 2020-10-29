@@ -76,7 +76,7 @@ const App = () => {
                 <Dashboard />
               </Route>
 
-              {user.role === "admin" ?
+              {user.role === "admin" || user.role === "developer" ?
                 <Route path={usersPath} >
                   <Users />
                 </Route>
@@ -85,7 +85,7 @@ const App = () => {
                 null
               }
 
-              {user.role === "admin" ?
+              {user.role === "admin" || user.role === "developer" ?
                 <Route exact path={productsPath} >
                   <Products />
                 </Route>
@@ -93,7 +93,7 @@ const App = () => {
                 null
               }
 
-              {user.role === "admin" ?
+              {user.role === "admin" || user.role === "developer" ?
                 <Route exact path={categoriesPath}>
                   <Categories />
                 </Route>
@@ -101,7 +101,7 @@ const App = () => {
                 null
               }
 
-              {user.role === "admin" ?
+              {user.role === "admin" || user.role === "developer" ?
                 <Route exact path={providersPath}>
                   <Providers />
                 </Route>
